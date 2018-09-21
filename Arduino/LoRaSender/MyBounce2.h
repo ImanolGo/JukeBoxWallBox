@@ -150,14 +150,6 @@ class Bounce
     */
     bool fallingEdge() { return fell(); }
      /**
-    @brief Deprecated (i.e. do not use). Included for partial compatibility for programs written with Bounce version 1
-    */
-     Bounce(uint8_t pin, unsigned long interval_millis ) : Bounce() {
-        attach(pin);
-        interval(interval_millis);
-    }
-    
-    /**
      @brief Returns the duration in milliseconds of the current state. 
 
      Is reset to 0 once the pin rises ( rose() ) or falls ( fell() ).

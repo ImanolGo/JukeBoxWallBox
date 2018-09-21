@@ -1,7 +1,7 @@
 // Please read Bounce2.h for information about the liscence and authors
 
 
-#include "Bounce2.h"
+#include "MyBounce2.h"
 
 static const uint8_t DEBOUNCED_STATE = 0b00000001;
 static const uint8_t UNSTABLE_STATE  = 0b00000010;

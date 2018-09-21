@@ -3,8 +3,8 @@ Written by Edward Wright (fasteddy@thewrightspace.net)
 Utilizes the Bounce2 library (https://github.com/thomasfredericks/Bounce2) by Thomas O Fredericks (tof@t-o-f.info)
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ButtonEvents_h
-#define ButtonEvents_h
+#ifndef MyButtonEvents_h
+#define MyButtonEvents_h
 
 #include "MyBounce2.h" // use Thomas Fredericks' button debounce library
 
@@ -16,6 +16,7 @@ enum ButtonEvent { none, tap, doubleTap, hold };
 class ButtonEvents {
   public:
     // public methods...
+    ButtonEvents();
     ButtonEvents(int buttonID); // default constructor - follows the argument-free Bounce2 convention.  Use defaults, or set explicitly later
     void attach(SX1509* io, int pin); // passthru to Bounce2 attach() method
     void attach(SX1509* io, int pin, int mode); // passthru to Bounce2 attach() overload
@@ -50,7 +51,7 @@ class ButtonEvents {
     // private methods...
     bool buttonPressed(); // returns true if the button was pressed (accounts for active high/low)
     bool buttonReleased(); // returns true if the button was released (accounts for active high/low)
-    int buttonId;
+    int buttonID;
 };
 
 

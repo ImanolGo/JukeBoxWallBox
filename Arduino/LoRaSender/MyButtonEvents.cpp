@@ -4,7 +4,12 @@ Utilizes the Bounce2 library (https://github.com/thomasfredericks/Bounce2) by Th
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "Arduino.h"
-#include "ButtonEvents.h"
+#include "Config.h"
+#include "MyButtonEvents.h"
+
+ButtonEvents::ButtonEvents() {
+  ButtonEvents(0);
+}
 
 // default (and only) constructor
 ButtonEvents::ButtonEvents(int buttonID) {

@@ -12,6 +12,7 @@
 #include "Arduino.h"
 #include "LoraManager.h"
 #include "MyButtonEvents.h"
+#include "Config.h"
 
 class InputManager
 {
@@ -30,7 +31,8 @@ class InputManager
   private:
 
     void initializeInputs();
-    void updateSerial();
+    void initializeButtons();
+    void updateButtons();
     void parseMessage(uint8_t* _buffer, uint8_t bufferSize);
     bool isMessage(uint8_t* _buffer, uint8_t bufferSize);
     bool isData(uint8_t* _buffer, uint8_t bufferSize);
@@ -43,7 +45,7 @@ class InputManager
     SX1509* io1;
     SX1509* io2;
 
-    MyButtonEvents buttons[NUM_BUTTONS]; 
+    ButtonEvents buttons[NUM_BUTTONS]; 
   
 };
 
@@ -83,104 +85,48 @@ void InputManager::initializeInputs()
 void InputManager::initializeButtons()
 {   
     int id = 0;
-    for(int i = )
+    for(int i = 0; i< NUM_BUTTONS/2; i++){
+      
+      buttons[id] = ButtonEvents(id);
+      buttons[id].attach(io1, i, INPUT_PULLUP); 
+      id++;
+    }
+
+    for(int i = 0; i< NUM_BUTTONS/2; i++){
+      
+      buttons[id] = ButtonEvents(id);
+      buttons[id].attach(io2, i, INPUT_PULLUP); 
+      id++;
+    }
 }
 
 void InputManager::update()
 {
-    updateSerial();
+    updateButtons();
 }
 
-void InputManager::updateSerial()
+void InputManager::updateButtons()
 {     
 
-    uint8_t numBytes = Serial.available();
-    
-    if (numBytes > 0) 
-    {
-         //Serial.print("SerialManager::received -> ");
-         //Serial.print(numBytes);
-         //Serial.println(numBytes);
-         //Serial.print("OK"); 
-         uint8_t buf[numBytes];
-         Serial.readBytes((char *) buf,numBytes);
-         //Serial.print("OK");
-         this->parseMessage(buf, numBytes);
-    }
-    
-}
-
-
-void InputManager::parseMessage(uint8_t* buf, uint8_t len)
-{
-      if(this->isMessage(buf,len))
-      {
-          if(this->isConnection(buf, len)){
-            this->sendConnected();
-            
-          }
-          else if(this->isData(buf, len)){
-              this->loraManager->sendMessage(buf, len);
-          } 
-         
+   for(int i = 0; i< NUM_BUTTONS; i++){
+      buttons[i].update();
+      // things to do if the button was tapped (single tap)
+      if (buttons[i].tapped() == true) {
+        Serial.println("TAP event detected");          
       }
-}
-
-
-void InputManager::sendConnected()
-{
-      int len = HEADER_SIZE+1;
-      byte buf[len];
-      buf[0] = 0x10;
-      buf[1] = 0x41;
-      buf[2] = 0x37;
-      buf[3] = 1;
-      buf[4] = 'c';
-      buf[5] = 0;
-      buf[6] = 'c';
+    
+      // things to do if the button was double-tapped
+      if (buttons[i].doubleTapped() == true) {
+        Serial.println("DOUBLE-TAP event detected");
+      }
       
-      Serial.write(buf, len);
-      this->loraManager->sendMessage(buf, len);
-      _connected = true;
-}
+      // things to do if the button was held
+      if (buttons[i].held() == true) {
+            Serial.println("HOLD event detected");
+            //this->loraManager->sendHold(buf, len);
+      }  
 
-
-bool InputManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
-{
-    if ( _buffer[0] == 0x10 && _buffer[1] == 0x41 && _buffer[2] == 0x37) 
-    { 
-        uint8_t data_size = _buffer[SIZE_INDEX];
-        if ( (bufferSize-HEADER_SIZE) == data_size ) 
-        {
-           //Serial.println("SerialManager::isMessage -> true");
-          return true; 
-        }
     }
-
-    //Serial.println("SerialManager::isMessage -> false");
-    return false;
-}
-
-
-bool InputManager::isData(uint8_t* _buffer, uint8_t bufferSize)
-{
-    if ( _buffer[COMMAND_INDEX] == 'd') { 
-      return true;
-    }
-
-    return false;
-}
-
-
-bool InputManager::isConnection(uint8_t* _buffer, uint8_t bufferSize)
-{
-    if ( _buffer[COMMAND_INDEX] == 'c') { 
-       //Serial.println("SerialManager::isConnection -> true");
-      return true;
-    }
-
-    //Serial.println("SerialManager::isConnection -> false");
-    return false;
 }
 
 

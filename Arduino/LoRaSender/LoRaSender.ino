@@ -44,7 +44,7 @@ void setup()
 void loop() 
 {
     inputManager.update();
-    serialManager.update();
+    loraManager.update();
  
 }
 
