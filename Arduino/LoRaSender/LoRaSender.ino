@@ -31,7 +31,7 @@ InputManager inputManager(&loraManager);
 void setupSerial()
 {
     Serial.begin(115200);
-    delay(300);
+    delay(2000);
     Serial.println("Starting Lora Sender!!!");
 }
 void setup() 

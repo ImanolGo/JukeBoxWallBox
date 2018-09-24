@@ -45,7 +45,7 @@ LoraManager::LoraManager()
 
 void LoraManager::setup()
 {
-    //Serial.println("LoraManager::setup");
+    Serial.println("LoraManager::setup");
     initializeLora();
 }
 
@@ -58,16 +58,16 @@ void LoraManager::initializeLora()
     delay(10);
   
     while (!this->rf95->init()) {
-      //Serial.println("LoraManager::LoRa radio init failed");
+      Serial.println("LoraManager::LoRa radio init failed");
       while (1);
     }
 
-    //Serial.println("LoraManager::LoRa radio init OK!");
+    Serial.println("LoraManager::LoRa radio init OK!");
 
      // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM (for low power module)
   // No encryption
     if (!this->rf95->setFrequency(RF95_FREQ)) {
-      //Serial.println("LoraManager::setFrequency failed");
+      Serial.println("LoraManager::setFrequency failed");
       while (1);
     }
     //Serial.print("LoraManager::Set Freq to: "); //Serial.println(rf69_FREQ);

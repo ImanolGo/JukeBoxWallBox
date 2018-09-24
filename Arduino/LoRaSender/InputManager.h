@@ -57,13 +57,16 @@ InputManager::InputManager(LoraManager* loraManager)
 
 void InputManager::setup()
 {
+    Serial.println("InputManager::setup");
     initializeInputs();
     initializeButtons();
-    Serial.println("InputManager::setup");
+   
 }
 
 void InputManager::initializeInputs()
 {
+      Serial.println("InputManager::initializeInputs");  
+      
      io1 = new SX1509();
      io2 = new SX1509();
 
@@ -84,20 +87,34 @@ void InputManager::initializeInputs()
 
 void InputManager::initializeButtons()
 {   
+
+     Serial.println("InputManager::initializeButtons!");  
     int id = 0;
     for(int i = 0; i< NUM_BUTTONS/2; i++){
       
       buttons[id] = ButtonEvents(id);
       buttons[id].attach(io1, i, INPUT_PULLUP); 
+      Serial.print("InputManager::added button ");  
+      Serial.print(id);  
+       Serial.print(", input: ");  
+      Serial.print(i); 
+      Serial.println(" to io1");  
       id++;
     }
 
-    for(int i = 0; i< NUM_BUTTONS/2; i++){
+    for(int i =  NUM_BUTTONS/2; i< NUM_BUTTONS; i++){
       
       buttons[id] = ButtonEvents(id);
       buttons[id].attach(io2, i, INPUT_PULLUP); 
+      Serial.print("InputManager::added button id: ");  
+      Serial.print(id);  
+      Serial.print(", input: ");  
+      Serial.print(i); 
+      Serial.println(" to io2");  
       id++;
     }
+
+   
 }
 
 void InputManager::update()
@@ -112,17 +129,20 @@ void InputManager::updateButtons()
       buttons[i].update();
       // things to do if the button was tapped (single tap)
       if (buttons[i].tapped() == true) {
-        Serial.println("TAP event detected");          
+        Serial.print("TAP event detected: ");  
+        Serial.println(i);          
       }
     
       // things to do if the button was double-tapped
-      if (buttons[i].doubleTapped() == true) {
-        Serial.println("DOUBLE-TAP event detected");
+      else if (buttons[i].doubleTapped() == true) {
+        Serial.print("DOUBLE-TAP event detected: ");
+        Serial.println(i); 
       }
       
       // things to do if the button was held
-      if (buttons[i].held() == true) {
-            Serial.println("HOLD event detected");
+      else if (buttons[i].held() == true) {
+            Serial.print("HOLD event detected: ");
+            Serial.println(i);
             //this->loraManager->sendHold(buf, len);
       }  
 
