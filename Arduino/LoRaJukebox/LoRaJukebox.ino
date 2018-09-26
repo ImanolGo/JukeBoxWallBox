@@ -15,6 +15,7 @@
  
  Hardware:4 
 * Adafruit Feather M0 RFM96 LoRa Radio 433MHz
+* SparkFun SX1509 IO Expansion module
 
 
  created 21th September 2018
