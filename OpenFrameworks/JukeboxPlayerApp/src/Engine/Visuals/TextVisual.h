@@ -36,7 +36,7 @@ public:
     virtual void draw();
     
     //! Sets the text to be drawn
-    virtual void setText(const std::string& text, const std::string& fontName, float fontSize, ofColor color = ofColor(0,0,0));
+    virtual void setText(const std::string& text, const std::string& fontName, float fontSize, ofColor color = ofColor(200));
     
     //! Sets the text to be drawn
     virtual void setText(const std::string& text);

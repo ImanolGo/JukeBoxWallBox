@@ -18,7 +18,7 @@
 
 #include "LayoutManager.h"
 
-const int LayoutManager::MARGIN = 2;
+const int LayoutManager::MARGIN = 10;
 const int LayoutManager::FRAME_MARGIN = 2;
 
 const string LayoutManager::LAYOUT_FONT =  "fonts/open-sans/OpenSans-Semibold.ttf";
@@ -51,6 +51,7 @@ void LayoutManager::setup()
     
     this->createTextVisuals();
     this->createImageVisuals();
+    
 }
 
 
@@ -84,7 +85,7 @@ void LayoutManager::setupWindowFrames()
     }
     
     this->resetWindowRects();
-    this->resetFbos();
+   // this->resetFbos();
     this->resetWindowFrames();
 }
 
@@ -95,15 +96,16 @@ void LayoutManager::resetWindowRects()
     float width = AppManager::getInstance().getSettingsManager().getAppWidth();
     float height  = AppManager::getInstance().getSettingsManager().getAppHeight();
     float ratio = width/ height;
-    float frame_width = ofGetWidth() - AppManager::getInstance().getGuiManager().getWidth() - 3*MARGIN;
+    float frame_width = ofGetWidth() - AppManager::getInstance().getGuiManager().getWidth();
     float frame_height= ofGetWindowHeight();
     
     
     int i = 0;
     for (auto& rect : m_windowRects)
     {
-        rect.second->height = frame_height/m_windowRects.size() - 2*MARGIN;
-        rect.second->width = frame_width;
+        rect.second->width = frame_width- 3*MARGIN;
+        rect.second->height = rect.second->width / ratio;
+        
         
 //        if(rect.second->width > frame_width  - 3*MARGIN){
 //            rect.second->width = frame_width  - 3*MARGIN;
@@ -111,8 +113,7 @@ void LayoutManager::resetWindowRects()
 //        }
         
         rect.second->x = AppManager::getInstance().getGuiManager().getWidth()  + 2*MARGIN;
-        rect.second->y = i*rect.second->height + 2*i*MARGIN  + MARGIN;
-        i++;
+        rect.second->y = ofGetHeight()*0.5 - rect.second->height/2;
     }
 }
 
@@ -154,7 +155,7 @@ void LayoutManager::updateAudioFbo()
 {
     string name = "Audio";
     this->begin(name);
-    AppManager::getInstance().getAudioManager().draw();
+        AppManager::getInstance().getAudioManager().draw();
     this->end(name);
 }
 
@@ -267,7 +268,7 @@ void LayoutManager::windowResized(int w, int h)
     }
     
     this->resetWindowRects();
-    this->resetFbos();
+   // this->resetFbos();
     this->resetWindowFrames();
     this->resetWindowTitles();
 }

@@ -13,6 +13,8 @@
 #include "SettingsManager.h"
 #include "BasicVisual.h"
 #include "ofxSimpleTimer.h"
+//#include "TextVisual.h"
+#include "ofxTextSuite.h"
 
 
 //========================== class AudioManager ==============================
@@ -64,11 +66,19 @@ private:
     
     void setupPlayer();
     
+    void setupText();
+    
     void setupSamples();
     
     void setupTimer();
     
     void updateTimer();
+    
+    void updateText();
+    
+    void updatePlayer();
+    
+    void drawText();
     
     void loadSampleNames();
     
@@ -87,6 +97,10 @@ private:
     ofxSimpleTimer      m_timer;
     
     int                 m_currentMode;
+    int                 m_currentSample;
+    bool                m_isPlaying;
+    
+    ofxTextBlock          m_text;
 
 };
 

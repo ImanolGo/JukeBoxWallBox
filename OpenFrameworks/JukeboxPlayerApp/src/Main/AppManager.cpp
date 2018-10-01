@@ -70,6 +70,8 @@ void AppManager::setupManagers()
     m_keyboardManager.setup();
     
     m_guiManager.setup();
+    
+    m_layoutManager.windowResized(ofGetWidth(), ofGetHeight());
 }
 
 void AppManager::update()
@@ -95,7 +97,7 @@ void AppManager::draw()
     
     ofBackground(17,17,17);
     m_layoutManager.draw();
-    m_guiManager.draw();    
+    m_guiManager.draw();
 }
 
 void AppManager::toggleDebugMode()

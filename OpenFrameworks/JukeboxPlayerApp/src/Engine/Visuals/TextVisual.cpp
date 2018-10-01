@@ -10,7 +10,9 @@
 
 TextVisual::TextVisual(ofVec3f pos, float width, float height, bool centred): BasicVisual(pos, width, height),m_fontSize(0), m_centred(centred), m_drawBB(false),m_lineHeight(1.0),m_alignment(OF_TEXT_ALIGN_LEFT)
 {
-    //Intentionally left empty
+    if(m_centred){
+        m_alignment = OF_TEXT_ALIGN_CENTER;
+    }
 }
 
 TextVisual::TextVisual(): BasicVisual(),m_fontSize(0), m_centred(false), m_drawBB(false), m_lineHeight(1.0),m_alignment(OF_TEXT_ALIGN_LEFT)
@@ -48,11 +50,13 @@ void TextVisual::setText(const std::string& text)
     
     m_box = ofRectangle(0,0,m_textSuite.getWidth(), m_textSuite.getHeight());
     
-    m_translation = ofVec3f(0);
-    if(m_centred){
-        m_translation.x -= m_box.getWidth()*0.5;
-        m_translation.y -= m_box.getHeight()*0.5;
-    }
+    m_textSuite.wrapTextX(m_width);
+    
+//    m_translation = ofVec3f(0);
+//    if(m_centred){
+//        m_translation.x -= m_box.getWidth()*0.5;
+//        m_translation.y -= m_box.getHeight()*0.5;
+//    }
 }
 
 void  TextVisual::setWidth(float width)
@@ -102,7 +106,7 @@ void TextVisual::draw()
             m_textSuite.drawRight(m_position.x + m_box.getWidth(), m_position.y);
             break;
         case OF_TEXT_ALIGN_CENTER:
-            m_textSuite.drawCenter(m_position.x,m_position.y - m_box.getHeight());
+            m_textSuite.drawCenter(m_position.x,m_position.y - m_box.getHeight()*0.5);
             break;
         case OF_TEXT_ALIGN_JUSTIFIED:
             m_textSuite.drawJustified(m_position.x,m_position.y, m_width);

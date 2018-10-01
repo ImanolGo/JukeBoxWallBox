@@ -20,7 +20,7 @@ const int   AudioManager::NUM_SAMPLES = 26;
 const int   AudioManager::WAIT_TIME_MS = 4000;
 
 
-AudioManager::AudioManager(): Manager(), m_currentSamplePath(""), m_currentMode(0)
+AudioManager::AudioManager(): Manager(), m_currentSamplePath(""), m_currentMode(0), m_isPlaying(true), m_currentSample(0)
 {
     //Intentionally left empty
 }
@@ -42,6 +42,7 @@ void AudioManager::setup()
     this->setupPlayer();
     this->setupSamples();
     this->setupTimer();
+    this->setupText();
     
    
    
@@ -81,6 +82,37 @@ void AudioManager::setupSamples()
         this->loadSubfolder(dirAux);
         
     }
+}
+
+void AudioManager::setupText()
+{
+    float width = AppManager::getInstance().getSettingsManager().getAppWidth() - LayoutManager::MARGIN;
+    float height = AppManager::getInstance().getSettingsManager().getAppHeight() - LayoutManager::MARGIN;
+    
+    float fontSize = 40;
+    string text = "TEXT";
+    string fontName =  LayoutManager::LAYOUT_FONT;
+   // string fontName =  "fonts/frabk.ttf";
+    
+//    ofPoint pos(width/2, height/2);
+//    m_text = TextVisual(pos,  width,  height, true);
+//
+  
+//
+//
+//    m_text.setText(text, fontName, fontSize, ofColor(255));
+//    m_text.drawBoundingBox(true);
+    
+    m_text.init(fontName, fontSize);
+    m_text.setText(text);
+    m_text.wrapTextX(width);
+    m_text.setColor(255,255, 255,255);
+    //m_text.wrapTextArea(width, height);
+    
+    ofLogNotice()<< "AudioManager::setupText";
+    this->updateText();
+    
+    
 }
 
 void AudioManager::loadSubfolder(ofDirectory& dir)
@@ -134,8 +166,30 @@ void AudioManager::setupTimer()
 
 void AudioManager::update()
 {
-    m_soundPlayer.setVolume(m_audioVolume->getValue());
     this->updateTimer();
+    this->updatePlayer();
+}
+
+void AudioManager::updateText()
+{
+    float width = AppManager::getInstance().getSettingsManager().getAppWidth() - LayoutManager::MARGIN;
+    string text = "Mode: " + ofToString(m_currentMode) + ", Sample: " + ofToString(m_currentSample);
+    
+    
+     m_text.setText(text);
+     m_text.wrapTextX(width);
+    
+}
+
+
+void AudioManager::updatePlayer()
+{
+    m_soundPlayer.setVolume(m_audioVolume->getValue());
+    
+    if(m_isPlaying && !m_soundPlayer.isPlaying()){
+        m_isPlaying = false;
+        AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+    }
 }
 
 void AudioManager::updateTimer()
@@ -147,8 +201,22 @@ void AudioManager::updateTimer()
 
 void AudioManager::draw()
 {
-    
+    this->drawText();
+   // ofClear(255,0,0);
 }
+
+void AudioManager::drawText()
+{
+    //m_text.draw();
+    
+    
+    float width = AppManager::getInstance().getSettingsManager().getAppWidth() - LayoutManager::MARGIN;
+    float height = AppManager::getInstance().getSettingsManager().getAppHeight() - LayoutManager::MARGIN;
+    
+    m_text.drawCenter(width/2,height/2 - m_text.getHeight()*0.5);
+//    m_text.wrapTextX(width);
+}
+
 
 bool AudioManager::playSample(string path)
 {
@@ -169,8 +237,9 @@ bool AudioManager::playSample(string path)
     
     EffectSettings settings; settings.animationTime = FADE_TIME_S;
     AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 1.0, settings);
-   // m_audioVolume->setValue(1.0);
-    //m_soundPlayer.setPaused(false);
+    AppManager::getInstance().getSerialManager().sendSampleToggle(1);
+    m_isPlaying = true;
+
     return true;
 }
 
@@ -180,6 +249,10 @@ void AudioManager::stopSample()
 
     EffectSettings settings; settings.animationTime = FADE_TIME_S;
     AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 0.0, settings);
+    
+    AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+    
+    m_isPlaying = false;
     
     //m_soundPlayer.setPaused(true);
 }
@@ -211,12 +284,14 @@ bool AudioManager::changeSample(int value)
     }
 
     
-    m_currentSamplePath = m_sampleNames[m_currentMode][value];
+    m_currentSample = value;
+    m_currentSamplePath = m_sampleNames[m_currentMode][m_currentSample];
 
-    ofLogNotice() <<"AudioManager::changeSample -> Mode: " << m_currentMode << ", Sample: " << value ;
+    ofLogNotice() <<"AudioManager::changeSample -> Mode: " << m_currentMode << ", Sample: " << m_currentSample ;
     ofLogNotice() <<"AudioManager::changeSample -> Path: " << m_currentSamplePath;
     
     m_timer.start(false,true);
+    this->updateText();
     this->stopSample();
 }
 
