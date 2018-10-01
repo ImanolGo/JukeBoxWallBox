@@ -222,7 +222,8 @@ void IOManager::setOutput(uint8_t id, bool value)
 void IOManager::update()
 {
     updateRegisters();
-    updateButtons();   
+    updateButtons();
+    updateOutputs();   
 }
 
 
