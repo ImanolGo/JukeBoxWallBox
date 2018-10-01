@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+
+  <of_settings>
+
+      <window title="Jukebox Player App" x="0" y="0" width="960" height="600" fullscreen="0" showCursor="1"/>
+
+      <debug showCursor="1" setVerbose="0" logToFile = "0"/>
+      <network ip="127.0.0.1"  portOscSend="7890" portOscReceive="5678"/>
+      <serial auto="1"  dmxPort="0" serialPort="2"/>
+
+  </of_settings>
+
+  <textures>
+
+    <texture name="Equalizer" path="images/general/equalizer.png"/>
+    <texture name="Brush" path="images/general/brush.png"/>
+
+  </textures>
+
+  <colors>
+
+    <color name="BackgroundColor" r="40" g="40" b="43" a="255"/>
+    <color name="CenterBackgroundColor" r="85" g="78" b="68" a="255"/>
+    <color name="EdgeBackgroundColor" r="30" g="30" b="30" a="255"/>
+    <color  name="GUI_Background" r="0" g="0" b="0" a="127"/>
+    <color  name="GUI_Fill" r="160" g="160" b="160" a="160"/>
+    <color  name="GUI1" r="160" g="160" b="80" a="200"/>
+    <color  name="GUI2" r="80" g="160" b="160" a="200"/>
+    <color  name="LiveRectangle" r="56" g="234" b="57" a="108"/>
+    <color  name="FrameRectangle" r="90" g="95" b="103" a="255"/>
+
+
+  </colors>
+
+</settings>
