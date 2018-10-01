@@ -13,8 +13,8 @@
 #include "SettingsManager.h"
 #include "BasicVisual.h"
 #include "ofxSimpleTimer.h"
-//#include "TextVisual.h"
-#include "ofxTextSuite.h"
+#include "TextVisual.h"
+//#include "ofxTextSuite.h"
 
 
 //========================== class AudioManager ==============================
@@ -100,7 +100,8 @@ private:
     int                 m_currentSample;
     bool                m_isPlaying;
     
-    ofxTextBlock          m_text;
+    //ofxTextBlock          m_text;
+    TextVisual          m_text;
 
 };
 

@@ -186,7 +186,7 @@ void LayoutManager::resetWindowTitles()
     for (auto& rect : m_windowRects)
     {
         float x =  rect.second->x + rect.second->width*0.5;
-        float y =  rect.second->y -  m_textVisuals[rect.first]->getHeight()*0.5 - MARGIN*0.5;
+        float y =  rect.second->y - MARGIN;
         ofPoint pos = ofPoint(x, y);
         m_textVisuals[rect.first]->setPosition(pos);
     }
@@ -237,7 +237,7 @@ void LayoutManager::draw()
         return;
     
     this->drawFbos();
-    this->drawText();
+    //this->drawText();
    
 }
 

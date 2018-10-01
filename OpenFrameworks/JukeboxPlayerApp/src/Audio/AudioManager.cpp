@@ -92,21 +92,15 @@ void AudioManager::setupText()
     float fontSize = 40;
     string text = "TEXT";
     string fontName =  LayoutManager::LAYOUT_FONT;
-   // string fontName =  "fonts/frabk.ttf";
+    ofPoint pos(width/2, height/2);
+    m_text = TextVisual(pos,  width,  height, true);
+    m_text.setText(text, fontName, fontSize, ofColor(210));
+    m_text.drawBoundingBox(true);
     
-//    ofPoint pos(width/2, height/2);
-//    m_text = TextVisual(pos,  width,  height, true);
-//
-  
-//
-//
-//    m_text.setText(text, fontName, fontSize, ofColor(255));
-//    m_text.drawBoundingBox(true);
-    
-    m_text.init(fontName, fontSize);
-    m_text.setText(text);
-    m_text.wrapTextX(width);
-    m_text.setColor(255,255, 255,255);
+//    m_text.init(fontName, fontSize);
+//    m_text.setText(text);
+//    m_text.wrapTextX(width);
+//    m_text.setColor(255,255, 255,255);
     //m_text.wrapTextArea(width, height);
     
     ofLogNotice()<< "AudioManager::setupText";
@@ -172,12 +166,12 @@ void AudioManager::update()
 
 void AudioManager::updateText()
 {
-    float width = AppManager::getInstance().getSettingsManager().getAppWidth() - LayoutManager::MARGIN;
+    //float width = AppManager::getInstance().getSettingsManager().getAppWidth() - LayoutManager::MARGIN;
     string text = "Mode: " + ofToString(m_currentMode) + ", Sample: " + ofToString(m_currentSample);
     
     
      m_text.setText(text);
-     m_text.wrapTextX(width);
+     //m_text.wrapTextX(width);
     
 }
 
@@ -207,14 +201,14 @@ void AudioManager::draw()
 
 void AudioManager::drawText()
 {
-    //m_text.draw();
+    m_text.draw();
     
     
-    float width = AppManager::getInstance().getSettingsManager().getAppWidth() - LayoutManager::MARGIN;
-    float height = AppManager::getInstance().getSettingsManager().getAppHeight() - LayoutManager::MARGIN;
-    
-    m_text.drawCenter(width/2,height/2 - m_text.getHeight()*0.5);
-//    m_text.wrapTextX(width);
+//    float width = AppManager::getInstance().getSettingsManager().getAppWidth() - LayoutManager::MARGIN;
+//    float height = AppManager::getInstance().getSettingsManager().getAppHeight() - LayoutManager::MARGIN;
+//
+//    m_text.drawCenter(width/2,height/2 - m_text.getHeight()*0.5);
+//m_text.wrapTextX(width);
 }
 
 

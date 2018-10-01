@@ -27,36 +27,28 @@ TextVisual::~TextVisual()
 
 void TextVisual::setText(const std::string& text, const std::string& fontName, float fontSize, ofColor color)
 {
-    m_text = text;
     m_fontSize = fontSize;
     m_fontName = fontName;
     m_color = color;
+    m_textSuite.init(m_fontName,m_fontSize);
     
-    this->setText(m_text);
+    this->setText(text);
 }
 
 void TextVisual::setText(const std::string& text)
 {
-    if (m_text == text) {
+    if(m_text==text){
         return;
     }
     
     m_text = text;
-    
-    m_textSuite.init(m_fontName,m_fontSize);
     m_textSuite.setText(m_text);
     m_textSuite.setLineHeight(m_lineHeight);
     m_textSuite.setColor(m_color.r, m_color.g, m_color.g, m_color.b);
+    m_textSuite.wrapTextX(m_width);
     
     m_box = ofRectangle(0,0,m_textSuite.getWidth(), m_textSuite.getHeight());
     
-    m_textSuite.wrapTextX(m_width);
-    
-//    m_translation = ofVec3f(0);
-//    if(m_centred){
-//        m_translation.x -= m_box.getWidth()*0.5;
-//        m_translation.y -= m_box.getHeight()*0.5;
-//    }
 }
 
 void  TextVisual::setWidth(float width)
