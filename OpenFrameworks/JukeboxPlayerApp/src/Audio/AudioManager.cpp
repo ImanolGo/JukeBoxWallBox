@@ -293,6 +293,8 @@ bool AudioManager::changeSample(int value)
     m_timer.start(false,true);
     this->updateText();
     this->stopSample();
+    
+    return true;
 }
 
 void AudioManager::timerCompleteHandler( int &args )
