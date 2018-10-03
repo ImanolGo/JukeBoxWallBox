@@ -214,7 +214,8 @@ void AudioManager::drawText()
 
 bool AudioManager::playSample(string path)
 {
-    if(!m_soundPlayer.load(path)){
+    if(!m_soundPlayer.load(path))
+    {
         ofLogNotice() <<"AudioManager::playSample -> No sample found under path:  " << path ;
         return false;
     }
@@ -238,6 +239,8 @@ bool AudioManager::playSample(string path)
         return true;
         
     }
+    
+    return false;
 }
 
 void AudioManager::stopSample()
