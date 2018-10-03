@@ -67,12 +67,11 @@ void SettingsManager::setDebugProperties()
     string path = "//of_settings/debug";
     auto xml = m_xml.findFirst(path);
     if(xml) {
-        typedef   std::map<string, string>   AttributesMap;
-        //  AttributesMap attributes = m_xml.getAttributes();
         
         bool showCursor = xml.getAttribute("showCursor").getBoolValue();
-        
         m_serialPort = xml.getAttribute("serialPort").getIntValue();
+        
+        ofLogNotice() <<"SettingsManager::setDebugProperties->  serial port -> " << m_serialPort;
         
         if(showCursor){
             ofShowCursor();
@@ -91,7 +90,7 @@ void SettingsManager::setDebugProperties()
         }
         
         
-        ofLogNotice() <<"SettingsManager::setDebugProperties->  successfully loaded the OF general settings" ;
+        ofLogNotice() <<"SettingsManager::setDebugProperties->  successfully loaded the OF debug settings" ;
         return;
     }
     

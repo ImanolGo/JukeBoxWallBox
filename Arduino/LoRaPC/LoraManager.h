@@ -42,6 +42,7 @@ class LoraManager
 
     void initializeLora();
     void updateLora();
+    void copyBuffer(uint8_t* _buffer, uint8_t bufferSize);
     bool isMessage(uint8_t* _buffer, uint8_t bufferSize);
     bool newMessage;
 
@@ -60,7 +61,9 @@ LoraManager::LoraManager()
 
 void LoraManager::setup()
 {
-    Serial.println("LoraManager::setup");
+    #ifdef DEBUG
+      Serial.println("LoraManager::setup");
+    #endif
     initializeLora();
 }
     
@@ -73,19 +76,28 @@ void LoraManager::initializeLora()
     delay(10);
   
     while (!this->rf95->init()) {
-      Serial.println("LoraManager::LoRa radio init failed");
+       #ifdef DEBUG
+        Serial.println("LoraManager::LoRa radio init failed");
+        #endif
       while (1);
     }
 
-    Serial.println("LoraManager::LoRa radio init OK!");
+    //Serial.println("LoraManager::LoRa radio init OK!");
 
      // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM (for low power module)
   // No encryption
     if (!this->rf95->setFrequency(RF95_FREQ)) {
-      Serial.println("LoraManager::setFrequency failed");
+      #ifdef DEBUG
+        Serial.println("LoraManager::setFrequency failed");
+       #endif
+     
       while (1);
     }
-    //Serial.print("LoraManager::Set Freq to: "); //Serial.println(rf69_FREQ);
+
+     #ifdef DEBUG
+        Serial.print("LoraManager::Set Freq to: "); Serial.print(RF95_FREQ); Serial.println("MHz");
+      #endif
+
     
    // The default transmitter power is 13dBm, using PA_BOOST.
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then 
@@ -110,37 +122,85 @@ void LoraManager::updateLora()
       if (this->rf95->available())
       {
         // Should be a message for us now
-//        uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-//        uint8_t len = sizeof(buf);
+        uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+        uint8_t len = sizeof(buf);
+        
       
-        if (this->rf95->recv(received_buffer, &receivedLength))
+        if (this->rf95->recv(buf, &len))
         {
-             RH_RF95::printBuffer("Received: ", received_buffer, receivedLength);
-            if(this->isMessage(received_buffer,receivedLength))
-            {
+             #ifdef DEBUG
+                Serial.print("LoraManager::Received Length: ");  Serial.println(len);
+              #endif
+              
+             #ifdef DEBUG
+              RH_RF95::printBuffer("Received: ", buf, len);
+            #endif
+
+            
+   
+             //newMessage = true;
+            if(this->isMessage(buf,len))
+            { 
+                this->copyBuffer(buf, len);
                 newMessage = true;
             }
         }
         else
         {
-          Serial.println("LoraManager::Receive failed");
+             #ifdef DEBUG
+                Serial.println("LoraManager::Receive failed");
+              #endif
         }
       }
 }
 
 
+void LoraManager::copyBuffer(uint8_t* _buffer, uint8_t bufferSize)
+{     
+      if(RH_RF95_MAX_MESSAGE_LEN<bufferSize){
+        return;
+      }
+
+      receivedLength = bufferSize;
+       
+      for(int i=0; i<receivedLength; i++){
+        received_buffer[i] = _buffer[i];
+      }
+    
+}
 
 bool LoraManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
 {
+
+//    #ifdef DEBUG
+//          Serial.print("LoraManager::_buffer[0]-> "); Serial.println(_buffer[0]);
+//          Serial.print("LoraManager::_buffer[1]-> "); Serial.println(_buffer[1]);
+//          Serial.print("LoraManager::_buffer[2]-> "); Serial.println(_buffer[2]);
+//     #endif
+
+        
     if ( _buffer[0] == 0x10 && _buffer[1] == 0x41 && _buffer[2] == 0x37) 
     { 
         uint8_t data_size = _buffer[SIZE_INDEX];
+
+//         #ifdef DEBUG
+//          Serial.print("LoraManager::data_size -> "); Serial.println(data_size);
+//        #endif
+        
         if ( (bufferSize-HEADER_SIZE) == data_size ) 
         {
+          #ifdef DEBUG
+          Serial.println("LoraManager::isMessage -> true");
+        #endif
+      
           return true; 
         }
     }
 
+     #ifdef DEBUG
+          Serial.println("LoraManager::isMessage -> false");
+     #endif
+        
     return false;
 }
 

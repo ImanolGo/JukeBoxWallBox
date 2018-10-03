@@ -185,12 +185,16 @@ bool LoraManager::isData(uint8_t* _buffer, uint8_t bufferSize)
     buff[4] = 'd'; 
     buff[5] = id; 
     buff[6] = mode; 
+
+    Serial.print("LoraManager::sendButtonPressed -> id = "); Serial.print(id);
+    Serial.print(", mode = "); Serial.println(mode);
     
     return this->sendMessage(buff, buffSize);
  }
 
 bool LoraManager::sendMessage(uint8_t* _buffer, uint8_t bufferSize)
-{       
+{   
+     RH_RF95::printBuffer("Send: ", _buffer, bufferSize);
     return this->rf95->send(_buffer, bufferSize);    
 }
 

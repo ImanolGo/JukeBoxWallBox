@@ -5,9 +5,8 @@
 
       <window title="Jukebox Player App" x="0" y="0" width="960" height="600" fullscreen="0" showCursor="1"/>
 
-      <debug showCursor="1" setVerbose="0" logToFile = "0"/>
+      <debug showCursor="1" setVerbose="0" logToFile = "0" serialPort="-1"/>
       <network ip="127.0.0.1"  portOscSend="7890" portOscReceive="5678"/>
-      <serial auto="1"  dmxPort="0" serialPort="2"/>
 
   </of_settings>
 

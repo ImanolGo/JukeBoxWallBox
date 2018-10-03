@@ -10,7 +10,6 @@
 
 #pragma once
 #include "Arduino.h"
-#include "FastLED.h"
 #include "LoraManager.h"
 #include "Config.h"
 
@@ -54,14 +53,18 @@ SerialManager::SerialManager(LoraManager* loraManager)
 void SerialManager::setup()
 {
     initializeSerial();
-    //Serial.println("SerialManager::setup");
-    //Serial.print("OK");
+
+    #ifdef DEBUG
+          Serial.println("SerialManager::setup");
+    #endif
+             
 }
 
 void SerialManager::initializeSerial()
 {
     Serial.begin(115200);
-    delay(500);
+    Serial.flush();
+    delay(1500);
 }
 
 
@@ -78,13 +81,8 @@ void SerialManager::updateSerial()
     
     if (numBytes > 0) 
     {
-         //Serial.print("SerialManager::received -> ");
-         //Serial.print(numBytes);
-         //Serial.println(numBytes);
-         //Serial.print("OK"); 
          uint8_t buf[numBytes];
          Serial.readBytes((char *) buf,numBytes);
-         //Serial.print("OK");
          this->parseMessage(buf, numBytes);
     }
     
@@ -94,6 +92,10 @@ void SerialManager::updateSerial()
 void SerialManager::updateLora()
 { 
     if(this->loraManager->isNewMessage()){
+         #ifdef DEBUG
+          Serial.println("SerialManager::isMessage -> true");
+        #endif
+        
         this->write(this->loraManager->getBuffer(), this->loraManager->getSize());
     }
 }
@@ -132,6 +134,10 @@ void SerialManager::sendConnected()
 
 void SerialManager::write(uint8_t* _buffer, uint8_t bufferSize)
 {
+    #ifdef DEBUG
+          Serial.print("SerialManager::write -> num bytes: "); Serial.println(bufferSize);
+    #endif
+        
     Serial.write(_buffer, bufferSize);
 }
 
@@ -147,7 +153,10 @@ bool SerialManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
         }
     }
 
-    //Serial.println("SerialManager::isMessage -> false");
+     #ifdef DEBUG
+          Serial.println("SerialManager::isMessage -> false");
+    #endif
+   
     return false;
 }
 
@@ -165,10 +174,14 @@ bool SerialManager::isData(uint8_t* _buffer, uint8_t bufferSize)
 bool SerialManager::isConnection(uint8_t* _buffer, uint8_t bufferSize)
 {
     if ( _buffer[COMMAND_INDEX] == 'c') { 
-       //Serial.println("SerialManager::isConnection -> true");
+      #ifdef DEBUG
+          Serial.println("SerialManager::isConnection -> true");
+      #endif
       return true;
     }
 
-    //Serial.println("SerialManager::isConnection -> false");
+    #ifdef DEBUG
+          Serial.println("SerialManager::isConnection -> false");
+      #endif
     return false;
 }

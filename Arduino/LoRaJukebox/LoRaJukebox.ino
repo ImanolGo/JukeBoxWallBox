@@ -10,7 +10,7 @@
  * Reading from LoRa communication to activate a relay on demand
 
  Software:
- * RadioHead (RH_RF9x) Library 
+ * RadioHead (RH_RF9x) Library  
  * SparkFun SX1509 Library 
  
  Hardware:4 

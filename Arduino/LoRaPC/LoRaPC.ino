@@ -31,16 +31,22 @@ SerialManager serialManager(&loraManager);
 
 void setup() 
 {
+
     serialManager.setup();
     loraManager.setup();
 
-    Serial.println("Setup Done!!!");
+    #ifdef DEBUG
+      Serial.println("LoraPC::Setup Done!!!");
+    #endif
+
+    
 }
 
 void loop() 
 {
-    serialManager.update();
     loraManager.update();
+    serialManager.update();
+    
 
     //delay(10);
     //Serial.println("Loop!!!");

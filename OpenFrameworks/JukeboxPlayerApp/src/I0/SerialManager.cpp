@@ -66,6 +66,9 @@ void SerialManager::setupSerial()
     //this->autoConnect();
     
     int serialPort = AppManager::getInstance().getSettingsManager().getSerialPort();
+    
+    ofLogNotice() <<"SerialManager::setupSerial <<  Serial Port from settings: " << serialPort;
+    
     if(serialPort<0){
         ofLogNotice() <<"SerialManager::setupSerial << Autoconnecting serial port";
         this->autoConnect();
@@ -119,6 +122,7 @@ bool SerialManager::checkConnection(int portNum)
 {
     if(m_serial.setup(portNum, BAUD_RATE)) //open a device number
     {
+        //m_serial.flush();
         this->sendConnection();
         ofSleepMillis(300);
         if(this->receivedConnected()){
@@ -276,6 +280,10 @@ bool SerialManager::parseData(unsigned char * buffer, int size)
 
 void SerialManager::update()
 {
+    if(!m_connected){
+        return;
+    }
+    
     int numBytes = m_serial.available();
     
     if ( numBytes == 0 )

@@ -162,13 +162,14 @@ void IOManager::initializeButtons()
     }
 
     for(int i = 0; i< NUM_BUTTONS/2; i++){
-      
+
+      int n = 16 -  NUM_BUTTONS/2 + i;
       buttons[id] = ButtonEvents(id);
-      buttons[id].attach(io2, i, INPUT_PULLUP); 
+      buttons[id].attach(io2, n, INPUT_PULLUP); 
       Serial.print("IOManager::added button id: ");  
       Serial.print(id);  
       Serial.print(", input: ");  
-      Serial.print(i); 
+      Serial.print(n); 
       Serial.println(" to io2");  
       id++;
     } 
@@ -180,7 +181,7 @@ void IOManager::initializeRegisters()
 
     Serial.println("IOManager::initializeRegisters!");  
     int id = 0;
-    for(int i = 13; i< 13 + NUM_REGISTERS; i++){
+    for(int i = 0; i<  NUM_REGISTERS; i++){
       
       registers[id] = ButtonEvents(id);
       registers[id].attach(io2, i, INPUT_PULLUP); 
