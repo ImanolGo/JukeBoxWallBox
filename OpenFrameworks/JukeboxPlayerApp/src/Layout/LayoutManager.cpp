@@ -225,7 +225,7 @@ void LayoutManager::onFullScreenChange(bool value)
     else{
         
         float width = 4*MARGIN + 2*AppManager::getInstance().getGuiManager().getWidth();
-        float height = AppManager::getInstance().getGuiManager().getHeight() + 2*MARGIN;
+        float height = 4*width;
         ofSetWindowShape(width,height);
     }
 }

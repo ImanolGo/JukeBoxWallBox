@@ -12,15 +12,14 @@
 #include "AppManager.h"
 
 #include "GuiManager.h"
-#include "GuiTheme.h"
 
 
 const string GuiManager::GUI_SETTINGS_FILE_NAME = "xmls/GuiSettings.xml";
 const string GuiManager::GUI_SETTINGS_NAME = "GUI";
-//const int GuiManager::GUI_WIDTH = 350;
+const float GuiManager::GUI_WIDTH = 200;
 
 
-GuiManager::GuiManager(): Manager(), m_showGui(true)
+GuiManager::GuiManager(): Manager(), m_showGui(true), m_switchColor(0)
 {
     //Intentionally left empty
 }
@@ -42,10 +41,8 @@ void GuiManager::setup()
     
     
     this->setupGuiParameters();
-    this->setupModesGui();
-    this->setupAudioGui();
-
-    this->setupGuiEvents();
+   // this->setupModesGui();
+    //this->setupAudioGui();
     this->loadGuiValues();
 
     
@@ -56,60 +53,57 @@ void GuiManager::setup()
 void GuiManager::setupGuiParameters()
 {
     
-    ofxDatGuiLog::quiet();
+   // m_gui.setPosition(MARGIN, MARGIN);
+    //m_gui.setPosition(20, 20);
+    m_gui.add(m_guiFPS.set("FPS", 0, 0, 60));
     
-    //m_gui.setPosition(ofxDatGuiAnchor::TOP_LEFT);
-    m_gui.setPosition(0,0);
-    //m_gui.setAssetPath(ofToDataPath("fonts/"));
-    //m_gui.setAssetPath(ofToDataPath("fonts/"));
-    //m_gui.setAssetPath("../Resources/data/fonts/");
-    m_gui.setTheme(new GuiTheme());
+    m_isSerial.set("Serial",  AppManager::getInstance().getSerialManager().getConnected());
     
+    m_gui.add(m_isSerial);
     
-    int margin =  LayoutManager::MARGIN;
-    m_gui.setAutoDraw(false);
-    auto pos = m_gui.getPosition();
-    m_gui.setPosition(pos.x + margin, pos.y + margin);
-    m_gui.addHeader(GUI_SETTINGS_NAME, false);
-    
-    m_gui.addFRM(0.1);
-    
-    m_gui.addToggle("Serial", AppManager::getInstance().getSerialManager().getConnected());
-    
-    m_gui.addBreak();
 }
 
 void GuiManager::setupModesGui()
 {
-    vector<string> modes;
+    m_modes.setName("MODES");
     for(int i = 0; i <  AudioManager::NUM_MODES; i++)
     {
         string modeName = "MODE: " + ofToString(i);
-        modes.push_back(modeName);
+        
+        ofParameter<bool> parameter;
+        parameter.set(modeName, false);
+        m_modeVector.push_back(parameter);
+        m_modes.add(m_modeVector.back());
     }
     
-    m_gui.addDropdown("MODES", modes);
-    m_gui.addBreak();
+    
+    m_modePanel = m_gui.addPanel(m_modes);
+    
 }
 
 
 void GuiManager::setupAudioGui()
 {
-    vector<string> samples;
+    m_indexes.setName("SAMPLES");
     for(int i = 0; i <  AudioManager::NUM_SAMPLES; i++)
     {
         string sampleName = "SAMPLE: " + ofToString(i);
-        samples.push_back(sampleName);
+        
+        ofParameter<bool> parameter;
+        parameter.set(sampleName, false);
+        m_indexVector.push_back(parameter);
+        m_indexes.add(m_indexVector.back());
     }
     
-    m_gui.addDropdown("SAMPLES", samples);
-    m_gui.addBreak();
+     m_indexPanel = m_gui.addPanel(m_indexes);
 }
 
 
 void GuiManager::update()
 {
-    m_gui.update();
+   // m_gui.update();
+    
+    m_guiFPS = ofGetFrameRate();
 }
 
 
@@ -126,24 +120,14 @@ void GuiManager::draw()
 void GuiManager::drawGui()
 {
     ofEnableAlphaBlending();
-    m_gui.draw();
+   // m_gui.draw();
     ofDisableAlphaBlending();
 }
-
-void GuiManager::setupGuiEvents()
-{
-    m_gui.onDropdownEvent(this, &GuiManager::onDropdownEvent);
-   // m_gui.onColorPickerEvent(this, &GuiManager::onColorPickerEvent);
-    m_gui.onButtonEvent(this, &GuiManager::onButtonEvent);
-    m_gui.onToggleEvent(this, &GuiManager::onToggleEvent);
-    //m_gui.onMatrixEvent(this, &GuiManager::onMatrixEvent);
-}
-
 
 void GuiManager::saveGuiValues(string path)
 {
     ofXml xml;
-    ofSerialize(xml, m_parameters);
+   // ofSerialize(xml, m_parameters);
     //xml.serialize(m_parameters);
     
     if(path.empty()){
@@ -167,69 +151,24 @@ void GuiManager::loadGuiValues(string path)
     }
     
     //xml.deserialize(m_parameters);
-    ofDeserialize(xml, m_parameters);
+    //ofDeserialize(xml, m_parameters);
 }
 
+
+void  GuiManager::setMode(int& index)
+{
+    AppManager::getInstance().getAudioManager().changeMode(index);
+}
+
+void  GuiManager::setIndex(int& index)
+{
+    AppManager::getInstance().getAudioManager().changeSample(index);
+}
 
 
 void GuiManager::toggleGui()
 {
     m_showGui = !m_showGui;
-}
-
-void GuiManager::drawRectangle()
-{
-    int margin =  LayoutManager::MARGIN;
-    ofPushStyle();
-    ofSetColor(15);
-    ofDrawRectangle( m_gui.getPosition().x - margin, 0, m_gui.getWidth() + 2*margin, ofGetHeight());
-    ofPopStyle();
-}
-
-
-
-void GuiManager::onDropdownEvent(ofxDatGuiDropdownEvent e)
-{
-    cout << "onDropdownEvent: " << e.target->getName() << " Selected" << endl;
-    
-    if(e.target->getName() == "MODES")
-    {
-        AppManager::getInstance().getAudioManager().changeMode(e.child);
-        m_gui.getDropdown(e.target->getName())->expand();
-        m_gui.getDropdown(e.target->getName())->setLabel("MODE: " + ofToString(e.child));
-    }
-    
-    else if(e.target->getName() == "SAMPLES")
-    {
-        AppManager::getInstance().getAudioManager().changeSample(e.child);
-        m_gui.getDropdown(e.target->getName())->expand();
-        m_gui.getDropdown(e.target->getName())->setLabel("SAMPLE: " + ofToString(e.child));
-    }
-    
-}
-
-void GuiManager::onColorPickerEvent(ofxDatGuiColorPickerEvent e)
-{
-    cout << "onColorPickerEvent: " << e.target->getName() << " Selected" << endl;
-    
-}
-
-void GuiManager::onButtonEvent(ofxDatGuiButtonEvent e)
-{
-    cout << "onButtonEvent: " << e.target->getName() << " Selected" << endl;
-    
-}
-
-
-void GuiManager::onToggleEvent(ofxDatGuiToggleEvent e)
-{
-    cout << "onToggleEvent: " << e.target->getName() << " Selected" << endl;
-    
-}
-
-void GuiManager::onMatrixEvent(ofxDatGuiMatrixEvent e)
-{
-    cout << "onMatrixEvent " << e.child << " : " << e.enabled << endl;
 }
 
 void GuiManager::setAudioMode(int value)
@@ -239,9 +178,6 @@ void GuiManager::setAudioMode(int value)
     }
     
     string dropBoxName = "MODES";
-    auto menu = m_gui.getDropdown(dropBoxName);
-    menu->select(value);
-    menu->setLabel("MODE:" + ofToString(value));
     AppManager::getInstance().getAudioManager().changeMode(value);
 }
 
@@ -252,15 +188,12 @@ void GuiManager::setAudioIndex(int value)
     }
     
     string dropBoxName = "SAMPLES";
-    auto menu = m_gui.getDropdown(dropBoxName);
-    menu->select(value);
-    menu->setLabel("SAMPLE:" + ofToString(value));
     AppManager::getInstance().getAudioManager().changeSample(value);
 }
 
 void GuiManager::setSerialConnected(bool value)
 {
-    m_gui.getToggle("Serial")->setChecked(value);
+    m_isSerial = value;
 }
 
 
