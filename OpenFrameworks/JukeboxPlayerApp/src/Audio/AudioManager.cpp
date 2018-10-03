@@ -218,23 +218,26 @@ bool AudioManager::playSample(string path)
         ofLogNotice() <<"AudioManager::playSample -> No sample found under path:  " << path ;
         return false;
     }
-    else{
+    else
+    {
         
         m_currentSamplePath = path;
         //m_soundPlayer.setPosition(0);
         m_soundPlayer.setLoop(false); //Sound will not loop
         m_soundPlayer.play();
         ofLogNotice() <<"AudioManager::playSample ->  " << m_currentSamplePath;
-    }
+  
     
-    AppManager::getInstance().getVisualEffectsManager().removeAllVisualEffects(m_audioVolume);
-    
-    EffectSettings settings; settings.animationTime = FADE_TIME_S;
-    AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 1.0, settings);
-    AppManager::getInstance().getSerialManager().sendSampleToggle(1);
-    m_isPlaying = true;
+        AppManager::getInstance().getVisualEffectsManager().removeAllVisualEffects(m_audioVolume);
 
-    return true;
+        EffectSettings settings; settings.animationTime = FADE_TIME_S;
+        AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 1.0, settings);
+        AppManager::getInstance().getSerialManager().sendSampleToggle(1);
+        m_isPlaying = true;
+
+        return true;
+        
+    }
 }
 
 void AudioManager::stopSample()
