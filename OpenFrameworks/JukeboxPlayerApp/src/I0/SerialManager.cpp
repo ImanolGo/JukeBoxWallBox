@@ -288,7 +288,7 @@ void SerialManager::update()
     
     if ( numBytes == 0 )
     {
-        return false;
+        return;
     }
     
     
