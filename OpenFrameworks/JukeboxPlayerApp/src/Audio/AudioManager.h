@@ -82,7 +82,7 @@ private:
     
     void loadSampleNames();
     
-    void loadSubfolder(ofDirectory& dir);
+    bool loadSubfolder(ofDirectory& dir);
     
 private:
     
