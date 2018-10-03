@@ -32,6 +32,9 @@
 LoraManager loraManager;
 IOManager ioManager(&loraManager);
 
+unsigned long StartTime = millis();
+
+
 void setupSerial()
 {
     Serial.begin(115200);
@@ -51,6 +54,12 @@ void loop()
 {
     ioManager.update();
     loraManager.update();
+
+ 
+    if(millis() - StartTime > 12000){
+        StartTime = millis();
+        loraManager.sendButtonPressed( random(26), random(4));
+    }
 
     //delay(10);
     //Serial.println("Loop!!!");
