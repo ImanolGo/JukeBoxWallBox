@@ -109,7 +109,7 @@ void AudioManager::setupText()
     
 }
 
-void AudioManager::loadSubfolder(ofDirectory& dir)
+bool AudioManager::loadSubfolder(ofDirectory& dir)
 {
     ofLogNotice() <<"AudioManager::loading subfolders ..." ;
     //only show png files
