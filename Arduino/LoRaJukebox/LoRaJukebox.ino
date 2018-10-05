@@ -55,13 +55,13 @@ void loop()
     ioManager.update();
     loraManager.update();
 
+    #ifdef DEBUG
  
     if(millis() - StartTime > 12000){
         StartTime = millis();
         loraManager.sendButtonPressed( random(26), random(4));
     }
 
-    //delay(10);
-    //Serial.println("Loop!!!");
+    #endif
  
 }

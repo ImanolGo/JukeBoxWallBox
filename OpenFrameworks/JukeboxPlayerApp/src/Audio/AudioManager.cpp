@@ -133,8 +133,14 @@ bool AudioManager::loadSubfolder(ofDirectory& dir)
     //go through and print out all the paths
     for(int i = 0; i < dir.size(); i++){
         string name = dir.getPath(i);
-        ofLogNotice()<< "AudioManager::loadSubfolder-> Loaded: " << name;
+        //ofLogNotice()<< "AudioManager::loadSubfolder-> Loaded: " << name;
         samples.push_back(name);
+    }
+    
+    std::sort(samples.begin(), samples.end());
+    
+    for(int i = 0; i < samples.size(); i++){
+        ofLogNotice()<< "AudioManager::loadSubfolder-> Loaded: " << samples[i];
     }
     
     
