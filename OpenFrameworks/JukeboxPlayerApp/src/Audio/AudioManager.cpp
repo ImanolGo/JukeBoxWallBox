@@ -188,7 +188,7 @@ void AudioManager::updatePlayer()
     
     if(m_isPlaying && !m_soundPlayer.isPlaying()){
         m_isPlaying = false;
-        AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+        AppManager::getInstance().getSerialManager().sendSampleToggle(1);
     }
 }
 
@@ -239,7 +239,7 @@ bool AudioManager::playSample(string path)
 
         EffectSettings settings; settings.animationTime = FADE_TIME_S;
         AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 1.0, settings);
-        AppManager::getInstance().getSerialManager().sendSampleToggle(1);
+        AppManager::getInstance().getSerialManager().sendSampleToggle(0);
         m_isPlaying = true;
 
         return true;
@@ -256,7 +256,7 @@ void AudioManager::stopSample()
     EffectSettings settings; settings.animationTime = FADE_TIME_S;
     AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 0.0, settings);
     
-    AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+    AppManager::getInstance().getSerialManager().sendSampleToggle(1);
     
     m_isPlaying = false;
     
