@@ -59,8 +59,9 @@ public:
     
     bool changeSample(int value);
     
-    void timerCompleteHandler( int &args ) ;
+    void timerCompleteHandlerSong( int &args ) ;
     
+    void timerCompleteHandlerRelay( int &args ) ;
     
 private:
     
@@ -70,9 +71,9 @@ private:
     
     void setupSamples();
     
-    void setupTimer();
+    void setupTimers();
     
-    void updateTimer();
+    void updateTimers();
     
     void updateText();
     
@@ -94,7 +95,8 @@ private:
     string              m_currentSamplePath;
     ofPtr<BasicVisual>  m_audioVolume;
     
-    ofxSimpleTimer      m_timer;
+    ofxSimpleTimer      m_timerSong;
+    ofxSimpleTimer      m_timerRelay;
     
     int                 m_currentMode;
     int                 m_currentSample;

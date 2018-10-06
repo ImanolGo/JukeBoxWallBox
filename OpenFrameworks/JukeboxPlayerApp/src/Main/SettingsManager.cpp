@@ -16,7 +16,7 @@
 const string SettingsManager::APPLICATION_SETTINGS_FILE_NAME = "xmls/ApplicationSettings.xml";
 
 
-SettingsManager::SettingsManager(): Manager(), m_appHeight(0.0), m_appWidth(0.0)
+SettingsManager::SettingsManager(): Manager(), m_appHeight(0.0), m_appWidth(0.0), m_pressWaitingTime(5000), m_relayHighTime(200)
 {
     //Intentionally left empty
 }
@@ -70,6 +70,8 @@ void SettingsManager::setDebugProperties()
         
         bool showCursor = xml.getAttribute("showCursor").getBoolValue();
         m_serialPort = xml.getAttribute("serialPort").getIntValue();
+        m_pressWaitingTime = xml.getAttribute("pressWaitingTimeMs").getIntValue();
+        m_relayHighTime = xml.getAttribute("relayHighTimeMs").getIntValue();
         
         ofLogNotice() <<"SettingsManager::setDebugProperties->  serial port -> " << m_serialPort;
         

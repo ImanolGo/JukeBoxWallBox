@@ -46,9 +46,12 @@ public:
     
     float getAppHeight() const {return m_appHeight;}
     
-     int getSerialPort() const {return m_serialPort;}
+    int getSerialPort() const {return m_serialPort;}
     
-   
+    int   getPressWaitingTime() const {return m_pressWaitingTime;}
+    
+    int   getRelayHighTime() const {return m_relayHighTime;}
+    
 private:
     
     //! Loads the settings file
@@ -83,6 +86,8 @@ private:
     float                   m_appWidth;             ///< stores the applications width
     float                   m_appHeight;            ///< stores the applications height
     ofColor                 m_blankColor;           ///<return blank color
+    int                     m_pressWaitingTime;     ///< the time to wait for a new song wihtout new presses
+    int                     m_relayHighTime;        ///< the time for the relay being high
     
     int                     m_serialPort;           ///< stores the settings serial port
 

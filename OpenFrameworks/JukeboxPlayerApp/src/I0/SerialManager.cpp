@@ -39,6 +39,8 @@ void SerialManager::setup()
     
     this->setupHeaders();
     this->setupSerial();
+    this->sendSampleToggle(1);
+    this->sendRelayToggle(0);
     
     ofLogNotice() <<"SerialManager::initialized" ;
 }
@@ -324,6 +326,28 @@ void SerialManager::sendSampleToggle(bool value)
     ofLogNotice() <<"SerialManager::sendSampleToggle ->  " << value;
     
     unsigned char channel = 0;
+    unsigned char data_value = value;
+    string message="";
+    message+= m_dataHeader.f1; message+= m_dataHeader.f2; message+= m_dataHeader.f3;
+    m_dataHeader.size = DATA_SIZE;
+    message+=  m_dataHeader.size;
+    message+=m_dataHeader.command;
+    message+=channel;
+    message+=data_value;
+    
+    m_serial.writeBytes((unsigned char *) message.c_str(), message.length());
+}
+
+void SerialManager::sendRelayToggle(bool value)
+{
+    if(!m_connected){
+        return;
+    }
+    
+    
+    ofLogNotice() <<"SerialManager::sendRelayToggle ->  " << value;
+    
+    unsigned char channel = 1;
     unsigned char data_value = value;
     string message="";
     message+= m_dataHeader.f1; message+= m_dataHeader.f2; message+= m_dataHeader.f3;
