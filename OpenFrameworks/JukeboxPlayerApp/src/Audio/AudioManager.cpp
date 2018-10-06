@@ -197,6 +197,8 @@ void AudioManager::updatePlayer()
     if(m_isPlaying && !m_soundPlayer.isPlaying()){
         m_isPlaying = false;
         AppManager::getInstance().getSerialManager().sendSampleToggle(1);
+        AppManager::getInstance().getSerialManager().sendRelayToggle(1);
+        m_timerRelay.start(false,true);
     }
 }
 
@@ -249,8 +251,6 @@ bool AudioManager::playSample(string path)
         EffectSettings settings; settings.animationTime = FADE_TIME_S;
         AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 1.0, settings);
         AppManager::getInstance().getSerialManager().sendSampleToggle(0);
-        AppManager::getInstance().getSerialManager().sendRelayToggle(1);
-        m_timerRelay.start(false,true);
         m_isPlaying = true;
 
         return true;
@@ -266,8 +266,6 @@ void AudioManager::stopSample()
 
     EffectSettings settings; settings.animationTime = FADE_TIME_S;
     AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 0.0, settings);
-    
-    AppManager::getInstance().getSerialManager().sendSampleToggle(0);
     
     m_isPlaying = false;
     
@@ -308,6 +306,7 @@ bool AudioManager::changeSample(int value)
     ofLogNotice() <<"AudioManager::changeSample -> Path: " << m_currentSamplePath;
     
     m_timerSong.start(false,true);
+    AppManager::getInstance().getSerialManager().sendSampleToggle(0);
     this->updateText();
     this->stopSample();
     
