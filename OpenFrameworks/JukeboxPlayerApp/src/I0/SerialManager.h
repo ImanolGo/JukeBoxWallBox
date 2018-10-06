@@ -54,6 +54,8 @@ public:
     
     void sendSampleToggle(bool value);
     
+    void sendRelayToggle(bool value);
+    
     bool getConnected() const {return m_connected;}
     
     

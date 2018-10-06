@@ -41,7 +41,7 @@ void AudioManager::setup()
     
     this->setupPlayer();
     this->setupSamples();
-    this->setupTimer();
+    this->setupTimers();
     this->setupText();
     
    
@@ -154,19 +154,27 @@ bool AudioManager::loadSubfolder(ofDirectory& dir)
 
 
 
-void AudioManager::setupTimer()
+void AudioManager::setupTimers()
 {
-    m_timer.setup( WAIT_TIME_MS );
+    auto time = AppManager::getInstance().getSettingsManager().getPressWaitingTime();
+    m_timerSong.setup( time );
     //m_timer.start( false ) ;
-    ofAddListener( m_timer.TIMER_COMPLETE , this, &AudioManager::timerCompleteHandler ) ;
+    ofAddListener( m_timerSong.TIMER_COMPLETE , this, &AudioManager::timerCompleteHandlerSong ) ;
     
-    ofLogNotice() <<"AudioManager::setupTimer << Time = : " << WAIT_TIME_MS << "ms";
+    ofLogNotice() <<"AudioManager::setupTimer << Time Song = : " << time << "ms";
+    
+    time = AppManager::getInstance().getSettingsManager().getRelayHighTime();
+    m_timerRelay.setup( time );
+    //m_timer.start( false ) ;
+    ofAddListener( m_timerRelay.TIMER_COMPLETE , this, &AudioManager::timerCompleteHandlerRelay ) ;
+    
+    ofLogNotice() <<"AudioManager::setupTimer << Time Relay = : " << time << "ms";
 }
 
 
 void AudioManager::update()
 {
-    this->updateTimer();
+    this->updateTimers();
     this->updatePlayer();
 }
 
@@ -188,13 +196,14 @@ void AudioManager::updatePlayer()
     
     if(m_isPlaying && !m_soundPlayer.isPlaying()){
         m_isPlaying = false;
-        AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+        AppManager::getInstance().getSerialManager().sendSampleToggle(1);
     }
 }
 
-void AudioManager::updateTimer()
+void AudioManager::updateTimers()
 {
-    m_timer.update();
+    m_timerSong.update();
+    m_timerRelay.update();
 }
 
 
@@ -239,7 +248,9 @@ bool AudioManager::playSample(string path)
 
         EffectSettings settings; settings.animationTime = FADE_TIME_S;
         AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 1.0, settings);
-        AppManager::getInstance().getSerialManager().sendSampleToggle(1);
+        AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+        AppManager::getInstance().getSerialManager().sendRelayToggle(1);
+        m_timerRelay.start(false,true);
         m_isPlaying = true;
 
         return true;
@@ -296,18 +307,28 @@ bool AudioManager::changeSample(int value)
     ofLogNotice() <<"AudioManager::changeSample -> Mode: " << m_currentMode << ", Sample: " << m_currentSample ;
     ofLogNotice() <<"AudioManager::changeSample -> Path: " << m_currentSamplePath;
     
-    m_timer.start(false,true);
+    m_timerSong.start(false,true);
     this->updateText();
     this->stopSample();
     
     return true;
 }
 
-void AudioManager::timerCompleteHandler( int &args )
+void AudioManager::timerCompleteHandlerSong( int &args )
 {
-    ofLogNotice() <<"AudioManager::timerCompleteHandler";
+    ofLogNotice() <<"AudioManager::timerCompleteHandlerSong";
     this->playSample(m_currentSamplePath);
 }
+
+
+void AudioManager::timerCompleteHandlerRelay( int &args )
+{
+    ofLogNotice() <<"AudioManager::timerCompleteHandlerRelay";
+    AppManager::getInstance().getSerialManager().sendRelayToggle(0);
+    
+
+}
+
 
 
 

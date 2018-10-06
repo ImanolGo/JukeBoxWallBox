@@ -4,8 +4,8 @@
   <of_settings>
 
       <window title="Jukebox Player App" x="50" y="50" width="960" height="600" fullscreen="0" showCursor="1"/>
-      	<debug showCursor="1" setVerbose="0" logToFile = "0" serialPort="0"/>
-	<network ip="127.0.0.1"  portOscSend="7890" portOscReceive="5678"/>
+      <debug showCursor="1" setVerbose="0" logToFile = "0" serialPort="0" pressWaitingTimeMs = "5000" relayHighTimeMs = "50"/>
+      <network ip="127.0.0.1"  portOscSend="7890" portOscReceive="5678"/>
 
   </of_settings>
 
