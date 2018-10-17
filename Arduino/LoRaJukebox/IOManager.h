@@ -245,8 +245,8 @@ void IOManager::updateButtons()
         Serial.print("IOManager::TAP event detected: ");  
         Serial.println(i);   
                
-        //this->loraManager->sendButtonPressed(i, mode);
-        this->loraManager->sendButtonPressed( random(26), random(4));
+        this->loraManager->sendButtonPressed(i, mode);
+        //this->loraManager->sendButtonPressed( random(26), random(4));
       }
     
       // things to do if the button was double-tapped
