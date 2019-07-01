@@ -46,6 +46,8 @@ void setup()
 
 void loop() 
 {
+    digitalWrite(LED_BUILTIN, LOW);
+    
     loraManager.update();
     serialManager.update();
     
