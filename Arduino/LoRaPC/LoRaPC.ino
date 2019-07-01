@@ -31,13 +31,15 @@ SerialManager serialManager(&loraManager);
 
 void setup() 
 {
-
+    pinMode(LED_BUILTIN, OUTPUT);
     serialManager.setup();
     loraManager.setup();
 
     #ifdef DEBUG
       Serial.println("LoraPC::Setup Done!!!");
     #endif
+
+    digitalWrite(LED_BUILTIN, HIGH);
 
     
 }

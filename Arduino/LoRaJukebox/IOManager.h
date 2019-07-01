@@ -162,14 +162,12 @@ void IOManager::initializeButtons()
     }
 
     for(int i = 0; i< NUM_BUTTONS/2; i++){
-
-      int n = 16 -  NUM_BUTTONS/2 + i;
       buttons[id] = ButtonEvents(id);
-      buttons[id].attach(io2, n, INPUT_PULLUP); 
-      Serial.print("IOManager::added button id: ");  
+      buttons[id].attach(io2, i, INPUT_PULLUP); 
+      Serial.print("IOManager::added button  ");  
       Serial.print(id);  
       Serial.print(", input: ");  
-      Serial.print(n); 
+      Serial.print(i); 
       Serial.println(" to io2");  
       id++;
     } 
@@ -181,14 +179,15 @@ void IOManager::initializeRegisters()
 
     Serial.println("IOManager::initializeRegisters!");  
     int id = 0;
+    int offset = 16 - NUM_REGISTERS;
     for(int i = 0; i<  NUM_REGISTERS; i++){
-      
+ 
       registers[id] = ButtonEvents(id);
-      registers[id].attach(io2, i, INPUT_PULLUP); 
+      registers[id].attach(io1, offset+i, INPUT_PULLUP); 
       Serial.print("IOManager::added register ");  
       Serial.print(id);  
       Serial.print(", input: ");  
-      Serial.print(i); 
+      Serial.print(offset+i); 
       Serial.println(" to io2");  
       id++;
     }
@@ -196,9 +195,10 @@ void IOManager::initializeRegisters()
 
 void IOManager::initializeOutputs()
 {
-    int offset = 16 - NUM_OUTPUTS;
+    Serial.println("IOManager::initializeOutputs!"); 
+    int offset = 15 - NUM_OUTPUTS;
     for(int i =0 ; i< NUM_OUTPUTS; i++){
-      outputs[i] = Output(io1, offset+i); 
+      outputs[i] = Output(io2, offset+i); 
       Serial.print("IOManager::added output ");  
       Serial.print(i);  
       Serial.print(", output: ");  
@@ -245,8 +245,8 @@ void IOManager::updateButtons()
         Serial.print("IOManager::TAP event detected: ");  
         Serial.println(i);   
                
-        //this->loraManager->sendButtonPressed(i, mode);
-        this->loraManager->sendButtonPressed( random(26), random(4));
+        this->loraManager->sendButtonPressed(i, mode);
+        //this->loraManager->sendButtonPressed( random(26), random(4));
       }
     
       // things to do if the button was double-tapped

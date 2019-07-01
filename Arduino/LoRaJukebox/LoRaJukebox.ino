@@ -42,11 +42,13 @@ void setupSerial()
     Serial.println("Starting Lora Sender!!!");
 }
 void setup() 
-{
+{   
+    pinMode(LED_BUILTIN, OUTPUT);
     setupSerial();
     ioManager.setup();
     loraManager.setup();
-
+    
+    digitalWrite(LED_BUILTIN, HIGH);
     Serial.println("Setup Done!!!");
 }
 
