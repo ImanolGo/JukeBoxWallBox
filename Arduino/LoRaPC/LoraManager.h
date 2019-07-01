@@ -128,6 +128,7 @@ void LoraManager::updateLora()
       
         if (this->rf95->recv(buf, &len))
         {
+             digitalWrite(LED_BUILTIN, HIGH);
              #ifdef DEBUG
                 Serial.print("LoraManager::Received Length: ");  Serial.println(len);
               #endif
