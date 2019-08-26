@@ -32,6 +32,7 @@ SerialManager serialManager(&loraManager);
 void setup() 
 {
     pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
     serialManager.setup();
     loraManager.setup();
 
@@ -39,7 +40,7 @@ void setup()
       Serial.println("LoraPC::Setup Done!!!");
     #endif
 
-    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(LED_BUILTIN, LOW);
 
     
 }

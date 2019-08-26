@@ -107,7 +107,7 @@ class Bounce
     @brief  Sets the debounce interval in milliseconds.
             
     @param    interval_millis
-    		The interval time in milliseconds.
+        The interval time in milliseconds.
      
      */
     void interval(uint16_t interval_millis);

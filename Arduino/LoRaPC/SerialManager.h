@@ -83,8 +83,8 @@ void SerialManager::updateSerial()
     {
          uint8_t buf[numBytes];
          Serial.readBytes((char *) buf,numBytes);
-         this->loraManager->sendMessage(buf, numBytes);
-         //this->parseMessage(buf, numBytes);
+         //this->loraManager->sendMessage(buf, numBytes);
+         this->parseMessage(buf, numBytes);
     }
     
 }
