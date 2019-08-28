@@ -13,7 +13,7 @@
  * RadioHead (RH_RF9x) Library  
  * SparkFun SX1509 Library 
  
- Hardware:4 
+ Hardware:
 * Adafruit Feather M0 RFM96 LoRa Radio 433MHz
 * SparkFun SX1509 IO Expansion module
 
@@ -37,6 +37,7 @@ unsigned long StartTime = millis();
 
 void setupSerial()
 {
+    randomSeed(analogRead(0));
     Serial.begin(115200);
     delay(1500);
     Serial.println("Starting Lora Sender!!!");
@@ -53,15 +54,18 @@ void setup()
 }
 
 void loop() 
-{
+{   
+    //Serial.println(millis());
     ioManager.update();
     loraManager.update();
 
     #ifdef DEBUG
- 
-    if(millis() - StartTime > 12000){
+    //Serial.println(millis());
+    if(millis() - StartTime > 20000){
         StartTime = millis();
-        loraManager.sendButtonPressed( random(26), random(4));
+        Serial.print("Time -> ");
+        Serial.println(StartTime/1000);
+        Serial.println(loraManager.sendButtonPressed( random(26), random(4)));
     }
 
     #endif
