@@ -61,8 +61,10 @@ void loop()
 
     #ifdef DEBUG
     //Serial.println(millis());
-    if(millis() - StartTime > 5000){
+    if(millis() - StartTime > 20000){
         StartTime = millis();
+        Serial.print("Time -> ");
+        Serial.println(StartTime/1000);
         Serial.println(loraManager.sendButtonPressed( random(26), random(4)));
     }
 
