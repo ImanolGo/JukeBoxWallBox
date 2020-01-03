@@ -84,7 +84,9 @@ void SerialManager::updateSerial()
          uint8_t buf[numBytes];
          Serial.readBytes((char *) buf,numBytes);
          //this->loraManager->sendMessage(buf, numBytes);
+         digitalWrite(LED_BUILTIN, HIGH);
          this->parseMessage(buf, numBytes);
+         digitalWrite(LED_BUILTIN, LOW);
     }
     
 }

@@ -12,4 +12,5 @@ while [ $ret -ne 0 ]; do
     ./JukeboxPlayerApp
     sleep 20
     ret=$?
+    sleep 60
 done

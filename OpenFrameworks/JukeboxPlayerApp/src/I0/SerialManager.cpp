@@ -126,7 +126,7 @@ bool SerialManager::checkConnection(int portNum)
     {
         //m_serial.flush();
         this->sendConnection();
-        ofSleepMillis(300);
+        ofSleepMillis(500);
         if(this->receivedConnected()){
             ofLogNotice() <<"SerialManager::checkConnection << Arduino connected to " << portNum;
             return true;
