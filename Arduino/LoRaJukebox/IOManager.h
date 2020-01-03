@@ -95,8 +95,8 @@ class IOManager
     SX1509* io1;
     SX1509* io2;
 
-    ButtonEvents buttons[NUM_BUTTONS]; 
-    ButtonEvents registers[NUM_REGISTERS]; 
+    Bounce buttons[NUM_BUTTONS]; 
+    Bounce registers[NUM_REGISTERS]; 
     Output       outputs[NUM_OUTPUTS]; 
 
     uint8_t _mode;
@@ -151,7 +151,7 @@ void IOManager::initializeButtons()
     int id = 0;
     for(int i = 0; i< NUM_BUTTONS/2; i++){
       
-      buttons[id] = ButtonEvents(id);
+      buttons[id] = Bounce();
       buttons[id].attach(io1, i, INPUT_PULLUP); 
       Serial.print("IOManager::added button ");  
       Serial.print(id);  
@@ -162,7 +162,7 @@ void IOManager::initializeButtons()
     }
 
     for(int i = 0; i< NUM_BUTTONS/2; i++){
-      buttons[id] = ButtonEvents(id);
+      buttons[id] = Bounce();
       buttons[id].attach(io2, i, INPUT_PULLUP); 
       Serial.print("IOManager::added button  ");  
       Serial.print(id);  
@@ -182,7 +182,7 @@ void IOManager::initializeRegisters()
     int offset = 16 - NUM_REGISTERS;
     for(int i = 0; i<  NUM_REGISTERS; i++){
  
-      registers[id] = ButtonEvents(id);
+      registers[id] = Bounce();
       registers[id].attach(io1, offset+i, INPUT_PULLUP); 
       Serial.print("IOManager::added register ");  
       Serial.print(id);  
@@ -248,33 +248,13 @@ void IOManager::updateButtons()
           this->loraManager->sendButtonPressed(i, _mode);
           Serial.print("IOManager:: -> send button pressed = ");  
           Serial.println(i);
-//        //this->loraManager->sendButtonPressed( random(26), random(4));
+         //this->loraManager->sendButtonPressed( random(26), random(4));
         }
        if(buttons[i].rose()){
           Serial.print("IOManager:: -> RISING EDGE = ");  
           Serial.println(i);
         }
         
-//      // things to do if the button was tapped (single tap)
-//      if (buttons[i].tapped() == true) {
-//        Serial.print("IOManager::TAP event detected: ");  
-//        Serial.println(i);   
-//               
-//        this->loraManager->sendButtonPressed(i, mode);
-//        //this->loraManager->sendButtonPressed( random(26), random(4));
-//      }
-//    
-//      // things to do if the button was double-tapped
-//      else if (buttons[i].doubleTapped() == true) {
-//        Serial.print("IOManager::DOUBLE-TAP event detected: ");
-//        Serial.println(i); 
-//      }
-//      
-//      // things to do if the button was held
-//      else if (buttons[i].held() == true) {
-//            Serial.print("IOManager::HOLD event detected: ");
-//            Serial.println(i);
-//      }  
    }
 
 }
