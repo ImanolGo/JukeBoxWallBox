@@ -95,7 +95,8 @@ class IOManager
     SX1509 io1;
     SX1509 io2;
 
-    Bounce buttons[NUM_BUTTONS]; 
+    Bounce buttons1[NUM_BUTTONS]; 
+    Bounce buttons2[NUM_BUTTONS]; 
     Bounce registers[NUM_REGISTERS]; 
     Output       outputs[NUM_OUTPUTS]; 
 
@@ -145,29 +146,23 @@ void IOManager::initializeButtons()
 {   
 
      Serial.println("IOManager::initializeButtons!");  
-    int id = 0;
-    for(int i = 0; i< NUM_BUTTONS/2; i++){
+    for(int i = 0; i< NUM_BUTTONS; i++){
       
-      buttons[id] = Bounce();
-      buttons[id].attach(&io1, i, INPUT_PULLUP); 
-      Serial.print("IOManager::added button ");  
-      Serial.print(id);  
-       Serial.print(", input: ");  
-      Serial.print(i); 
+      buttons1[i] = Bounce();
+      buttons1[i].attach(&io1, i, INPUT_PULLUP); 
+      Serial.print("JukeBoxAllInputs::added button ");  
+      Serial.print(i);  
       Serial.println(" to io1");  
-      id++;
     }
 
-    for(int i = 0; i< NUM_BUTTONS/2; i++){
-      buttons[id] = Bounce();
-      buttons[id].attach(&io2, i, INPUT_PULLUP); 
-      Serial.print("IOManager::added button  ");  
-      Serial.print(id);  
-      Serial.print(", input: ");  
-      Serial.print(i); 
+    for(int i = 0; i< NUM_BUTTONS; i++){
+      
+      buttons2[i] = Bounce();
+      buttons2[i].attach(&io2, i, INPUT_PULLUP); 
+      Serial.print("JukeBoxAllInputs::added button ");  
+      Serial.print(i);  
       Serial.println(" to io2");  
-      id++;
-    } 
+    }
 }
 
 
@@ -180,12 +175,12 @@ void IOManager::initializeRegisters()
     for(int i = 0; i<  NUM_REGISTERS; i++){
  
       registers[id] = Bounce();
-      registers[id].attach(&io1, offset+i, INPUT_PULLUP); 
+      registers[id].attach(&io2, offset+i, INPUT_PULLUP); 
       Serial.print("IOManager::added register ");  
       Serial.print(id);  
       Serial.print(", input: ");  
       Serial.print(offset+i); 
-      Serial.println(" to io1");  
+      Serial.println(" to io2");  
       id++;
     }
 }
@@ -195,12 +190,12 @@ void IOManager::initializeOutputs()
     Serial.println("IOManager::initializeOutputs!"); 
     int offset = 15 - NUM_OUTPUTS;
     for(int i =0 ; i< NUM_OUTPUTS; i++){
-      outputs[i] = Output(&io2, offset+i); 
+      outputs[i] = Output(&io1, offset+i); 
       Serial.print("IOManager::added output ");  
       Serial.print(i);  
       Serial.print(", output: ");  
       Serial.print(offset+i); 
-      Serial.println(" to io2"); 
+      Serial.println(" to io1"); 
     }
 }
 
@@ -218,9 +213,9 @@ void IOManager::setOutput(uint8_t id, bool value)
 
 
 void IOManager::update()
-{
-    updateRegisters();
+{   
     updateButtons();
+    updateRegisters();
     updateOutputs();   
 }
 
@@ -233,26 +228,46 @@ void IOManager::updateOutputs()
 }
 void IOManager::updateButtons()
 {     
-
-   for(int i = 0; i< NUM_BUTTONS; i++)
-   {
-      buttons[i].update();
-
-      if(buttons[i].fell()){
-          Serial.print("IOManager:: -> FALLING EDGE = ");  
-          Serial.println(i);
-
-          this->loraManager->sendButtonPressed(i, _mode);
-          Serial.print("IOManager:: -> send button pressed = ");  
-          Serial.println(i);
-         //this->loraManager->sendButtonPressed( random(26), random(4));
-        }
-       if(buttons[i].rose()){
-          Serial.print("IOManager:: -> RISING EDGE = ");  
-          Serial.println(i);
-        }
+    int id = 0;
+    for(int i = 0; i< NUM_BUTTONS; i++)
+    {
         
-   }
+        buttons1[i].update();
+        if(buttons1[i].fell()){
+          Serial.print("JukeBoxAllInputs::io1 -> FALLING EDGE = ");  
+          Serial.println(i);
+
+          this->loraManager->sendButtonPressed(id, _mode);
+          Serial.print("IOManager:: -> send button pressed = ");  
+          Serial.println(id);
+        }
+        if(buttons1[i].rose()){
+          Serial.print("JukeBoxAllInputs::io1 -> RISING EDGE = ");  
+          Serial.println(i);
+        }
+
+        id++;
+    }
+
+    for(int i = 0; i< NUM_BUTTONS; i++)
+    {
+        
+        buttons2[i].update();
+        if(buttons2[i].fell()){
+          Serial.print("JukeBoxAllInputs::io2 -> FALLING EDGE = ");  
+          Serial.println(i);
+
+          this->loraManager->sendButtonPressed(id, _mode);
+          Serial.print("IOManager:: -> send button pressed = ");  
+          Serial.println(id);
+        }
+        if(buttons2[i].rose()){
+          Serial.print("JukeBoxAllInputs::io2 -> RISING EDGE = ");  
+          Serial.println(i);
+        }
+
+        id++;
+    }
 
 }
 
@@ -271,12 +286,12 @@ void IOManager::updateRegisters()
       _mode = 3;
     }
 
-    else if(registers[1].read())
+    else if(registers[1].read() == 1)
     {
       _mode = 2;
     }
 
-     else if(registers[0].read())
+     else if(registers[0].read() == 1)
     {
       _mode = 1;
     }
