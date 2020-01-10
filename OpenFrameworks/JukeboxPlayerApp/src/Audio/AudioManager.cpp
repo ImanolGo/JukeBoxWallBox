@@ -197,7 +197,7 @@ void AudioManager::updatePlayer()
     if(m_isPlaying && !m_soundPlayer.isPlaying()){
         m_isPlaying = false;
         AppManager::getInstance().getSerialManager().sendSampleToggle(1);
-        AppManager::getInstance().getSerialManager().sendRelayToggle(1);
+        AppManager::getInstance().getSerialManager().sendRelayToggle(0);
         m_timerRelay.start(false,true);
     }
 }
@@ -323,7 +323,7 @@ void AudioManager::timerCompleteHandlerSong( int &args )
 void AudioManager::timerCompleteHandlerRelay( int &args )
 {
     ofLogNotice() <<"AudioManager::timerCompleteHandlerRelay";
-    AppManager::getInstance().getSerialManager().sendRelayToggle(0);
+    AppManager::getInstance().getSerialManager().sendRelayToggle(1);
     
 
 }
