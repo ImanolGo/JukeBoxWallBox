@@ -11,7 +11,7 @@
 #pragma once
 #include "Arduino.h"
 #include "LoraManager.h"
-#include "MyButtonEvents.h"
+#include "MyBounce2.h"
 #include "Config.h"
 #include <SparkFunSX1509.h> // Include SX1509 library
 
@@ -92,8 +92,8 @@ class IOManager
 
   private:
  
-    SX1509* io1;
-    SX1509* io2;
+    SX1509 io1;
+    SX1509 io2;
 
     Bounce buttons[NUM_BUTTONS]; 
     Bounce registers[NUM_REGISTERS]; 
@@ -126,17 +126,14 @@ void IOManager::initializeIO()
 {
       Serial.println("IOManager::initializeInputs");  
       
-     io1 = new SX1509();
-     io2 = new SX1509();
-
-      if (!io1->begin(0x3E))
+      if (!io1.begin(0x3E))
       {
         while (1) ;
       }
 
       Serial.println("IOManager::initializeInputs -> connected to io1");
       
-       if (!io2->begin(0x3F))
+       if (!io2.begin(0x3F))
       {
         while (1) ;
       }
@@ -152,7 +149,7 @@ void IOManager::initializeButtons()
     for(int i = 0; i< NUM_BUTTONS/2; i++){
       
       buttons[id] = Bounce();
-      buttons[id].attach(io1, i, INPUT_PULLUP); 
+      buttons[id].attach(&io1, i, INPUT_PULLUP); 
       Serial.print("IOManager::added button ");  
       Serial.print(id);  
        Serial.print(", input: ");  
@@ -163,7 +160,7 @@ void IOManager::initializeButtons()
 
     for(int i = 0; i< NUM_BUTTONS/2; i++){
       buttons[id] = Bounce();
-      buttons[id].attach(io2, i, INPUT_PULLUP); 
+      buttons[id].attach(&io2, i, INPUT_PULLUP); 
       Serial.print("IOManager::added button  ");  
       Serial.print(id);  
       Serial.print(", input: ");  
@@ -183,12 +180,12 @@ void IOManager::initializeRegisters()
     for(int i = 0; i<  NUM_REGISTERS; i++){
  
       registers[id] = Bounce();
-      registers[id].attach(io1, offset+i, INPUT_PULLUP); 
+      registers[id].attach(&io1, offset+i, INPUT_PULLUP); 
       Serial.print("IOManager::added register ");  
       Serial.print(id);  
       Serial.print(", input: ");  
       Serial.print(offset+i); 
-      Serial.println(" to io2");  
+      Serial.println(" to io1");  
       id++;
     }
 }
@@ -198,12 +195,12 @@ void IOManager::initializeOutputs()
     Serial.println("IOManager::initializeOutputs!"); 
     int offset = 15 - NUM_OUTPUTS;
     for(int i =0 ; i< NUM_OUTPUTS; i++){
-      outputs[i] = Output(io2, offset+i); 
+      outputs[i] = Output(&io2, offset+i); 
       Serial.print("IOManager::added output ");  
       Serial.print(i);  
       Serial.print(", output: ");  
       Serial.print(offset+i); 
-      Serial.println(" to io1"); 
+      Serial.println(" to io2"); 
     }
 }
 
