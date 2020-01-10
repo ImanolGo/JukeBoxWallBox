@@ -39,7 +39,7 @@ void setupSerial()
 {
     randomSeed(analogRead(0));
     Serial.begin(115200);
-    delay(1500);
+    delay(2500);
     Serial.println("Starting Lora Sender!!!");
 }
 void setup() 
@@ -58,16 +58,16 @@ void loop()
     //Serial.println(millis());
     ioManager.update();
     loraManager.update();
-
-    #ifdef DEBUG
-    //Serial.println(millis());
-    if(millis() - StartTime > 20000){
-        StartTime = millis();
-        Serial.print("Time -> ");
-        Serial.println(StartTime/1000);
-        Serial.println(loraManager.sendButtonPressed( random(26), random(4)));
-    }
-
-    #endif
+//
+//    #ifdef DEBUG
+//    //Serial.println(millis());
+//    if(millis() - StartTime > 20000){
+//        StartTime = millis();
+//        Serial.print("Time -> ");
+//        Serial.println(StartTime/1000);
+//        Serial.println(loraManager.sendButtonPressed( random(26), random(4)));
+//    }
+//
+//    #endif
  
 }
