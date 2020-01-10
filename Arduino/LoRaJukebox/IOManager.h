@@ -180,12 +180,12 @@ void IOManager::initializeRegisters()
     for(int i = 0; i<  NUM_REGISTERS; i++){
  
       registers[id] = Bounce();
-      registers[id].attach(&io1, offset+i, INPUT_PULLUP); 
+      registers[id].attach(&io2, offset+i, INPUT_PULLUP); 
       Serial.print("IOManager::added register ");  
       Serial.print(id);  
       Serial.print(", input: ");  
       Serial.print(offset+i); 
-      Serial.println(" to io1");  
+      Serial.println(" to io2");  
       id++;
     }
 }
@@ -195,12 +195,12 @@ void IOManager::initializeOutputs()
     Serial.println("IOManager::initializeOutputs!"); 
     int offset = 15 - NUM_OUTPUTS;
     for(int i =0 ; i< NUM_OUTPUTS; i++){
-      outputs[i] = Output(&io2, offset+i); 
+      outputs[i] = Output(&io1, offset+i); 
       Serial.print("IOManager::added output ");  
       Serial.print(i);  
       Serial.print(", output: ");  
       Serial.print(offset+i); 
-      Serial.println(" to io2"); 
+      Serial.println(" to io1"); 
     }
 }
 
@@ -218,9 +218,9 @@ void IOManager::setOutput(uint8_t id, bool value)
 
 
 void IOManager::update()
-{
-    updateRegisters();
+{   
     updateButtons();
+    updateRegisters();
     updateOutputs();   
 }
 
@@ -271,12 +271,12 @@ void IOManager::updateRegisters()
       _mode = 3;
     }
 
-    else if(registers[1].read())
+    else if(registers[1].read() == 1)
     {
       _mode = 2;
     }
 
-     else if(registers[0].read())
+     else if(registers[0].read() == 1)
     {
       _mode = 1;
     }

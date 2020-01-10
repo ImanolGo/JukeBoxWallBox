@@ -39,7 +39,7 @@ void setupSerial()
 {
     randomSeed(analogRead(0));
     Serial.begin(115200);
-    delay(1500);
+    delay(2500);
     Serial.println("Starting Lora Sender!!!");
 }
 void setup() 
