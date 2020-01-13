@@ -170,7 +170,7 @@ void IOManager::initializeRegisters()
 {   
 
     Serial.println("IOManager::initializeRegisters!");  
-    int id = 0;
+    int id = 0;s
     int offset = 16 - NUM_REGISTERS;
     for(int i = 0; i<  NUM_REGISTERS; i++){
  
@@ -188,7 +188,7 @@ void IOManager::initializeRegisters()
 void IOManager::initializeOutputs()
 {
     Serial.println("IOManager::initializeOutputs!"); 
-    int offset = 15 - NUM_OUTPUTS;
+    int offset = 16 - NUM_OUTPUTS;
     for(int i =0 ; i< NUM_OUTPUTS; i++){
       outputs[i] = Output(&io1, offset+i); 
       Serial.print("IOManager::added output ");  
