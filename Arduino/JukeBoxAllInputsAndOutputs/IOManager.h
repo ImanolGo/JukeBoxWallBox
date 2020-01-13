@@ -118,8 +118,8 @@ void IOManager::setup()
     Serial.println("IOManager::setup");
     initializeIO();
     initializeButtons();
-    //initializeRegisters();
-    //initializeOutputs();
+    initializeRegisters();
+    initializeOutputs();
    
 }
 
@@ -215,8 +215,8 @@ void IOManager::setOutput(uint8_t id, bool value)
 void IOManager::update()
 {   
     updateButtons();
-    //updateRegisters();
-    //updateOutputs();   
+    updateRegisters();
+    updateOutputs();   
 }
 
 
