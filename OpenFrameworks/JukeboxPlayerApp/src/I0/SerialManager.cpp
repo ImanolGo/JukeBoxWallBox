@@ -254,6 +254,8 @@ bool SerialManager::isData(unsigned char * buffer, int size)
 
 bool SerialManager::parseData(unsigned char * buffer, int size)
 {
+    this->printHex(buffer,size);
+
     if(!this->isData(buffer, size)){
         return false;
     }
@@ -336,6 +338,8 @@ void SerialManager::sendSampleToggle(bool value)
     message+=data_value;
     
     m_serial.writeBytes((unsigned char *) message.c_str(), message.length());
+
+    this->printHex((unsigned char *) message.c_str(), message.length());
 }
 
 void SerialManager::sendRelayToggle(bool value)
@@ -358,9 +362,19 @@ void SerialManager::sendRelayToggle(bool value)
     message+=data_value;
     
     m_serial.writeBytes((unsigned char *) message.c_str(), message.length());
+    this->printHex((unsigned char *) message.c_str(), message.length());
     
 }
 
 
-
+void SerialManager::printHex(unsigned char * buffer, int size)
+{
+    std::stringstream ss;
+    for(int i=0; i<size; ++i){
+        ss << std::hex << (int)buffer[i] << " ";
+    }
+    std::string mystr = ss.str();
+    
+    ofLogNotice() <<"UdpManager::SerialManager ->  hex: " << mystr;
+}
 
