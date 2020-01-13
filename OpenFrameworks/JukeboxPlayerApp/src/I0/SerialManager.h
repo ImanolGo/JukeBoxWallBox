@@ -84,6 +84,8 @@ private:
     bool isConnected(unsigned char * buffer, int size);
     
     bool parseData(unsigned char * buffer, int size);
+
+    void printHex(unsigned char * buffer, int size);
     
 private:
     
