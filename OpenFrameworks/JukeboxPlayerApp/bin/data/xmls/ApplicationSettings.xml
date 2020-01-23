@@ -3,7 +3,7 @@
 
   <of_settings>
       <window title="Jukebox Player App" x="500" y="200" width="960" height="600" fullscreen="0" showCursor="1"/>
-      <debug showCursor="1" setVerbose="0" logToFile = "0" serialPort="-1" pressWaitingTimeMs = "5000" relayHighTimeMs = "1000"/>
+      <debug showCursor="1" setVerbose="0" logToFile = "0" serialPort="-1" pressWaitingTimeMs = "1000" relayHighTimeMs = "500"/>
       <network ip="127.0.0.1"  portOscSend="7890" portOscReceive="5678"/>
 
   </of_settings>

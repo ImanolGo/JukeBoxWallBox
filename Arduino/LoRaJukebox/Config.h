@@ -16,7 +16,7 @@
 
 #define NUM_BUTTONS   13
 #define NUM_REGISTERS   3
-#define NUM_OUTPUTS   3
+#define NUM_OUTPUTS   2
 #define DEFAULT_DEBOUNCE_MS   35
 #define DEFAULT_DOUBLETAP_MS  150
 #define DEFAULT_HOLD_MS       1000
