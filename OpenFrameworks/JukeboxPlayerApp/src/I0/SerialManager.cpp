@@ -332,17 +332,6 @@ void SerialManager::update()
     ofLogNotice() <<"SerialManager::update << Received: " << str;
     ofLogNotice() <<"SerialManager::update << Num Bytes Received: " << bytesRemaining;
     
-    
-    // check for error code
-    if ( result == OF_SERIAL_ERROR ){
-        // something bad happened
-        ofLog( OF_LOG_ERROR, "unrecoverable error reading from serial" );
-    }
-    else if ( result == OF_SERIAL_NO_DATA ){
-        ofLog( OF_LOG_ERROR, "no data reading from serial" );
-    }
-    
-    
     this->parseData(bytes, bytesRequired);
 }
 
