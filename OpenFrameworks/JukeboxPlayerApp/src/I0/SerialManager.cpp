@@ -288,21 +288,50 @@ void SerialManager::update()
         return;
     }
     
-    int numBytes = m_serial.available();
-    
-    if ( numBytes == 0 )
+    // we want to read 7 bytes
+    int bytesRequired = HEADER_SIZE + DATA_SIZE;
+    unsigned char bytes[bytesRequired];
+    int bytesRemaining = bytesRequired;
+
+    // loop until we've read everything
+    while ( bytesRemaining > 0 )
     {
-        return;
+        // check for data
+        if ( m_serial.available() > 0 )
+        {
+            // try to read - note offset into the bytes[] array, this is so
+            // that we don't overwrite the bytes we already have
+            int bytesArrayOffset = bytesRequired - bytesRemaining;
+            int result = m_serial.readBytes( &bytes[bytesArrayOffset],
+            bytesRemaining );
+        
+            // check for error code
+            if ( result == OF_SERIAL_ERROR )
+            {
+                // something bad happened
+                ofLog( OF_LOG_ERROR, "unrecoverable error reading from serial" );
+                // bail out
+            break;
+            }
+            else if ( result == OF_SERIAL_NO_DATA )
+            {
+                // nothing was read, try again
+            }
+            else
+            {
+                // we read some data!
+                bytesRemaining -= result;
+            }
+        }
     }
-    
-    
-    unsigned char bytes[numBytes];
-    
-    int result = m_serial.readBytes( bytes, numBytes );
-    
+
+
+
     string str((char *)bytes);
     
     ofLogNotice() <<"SerialManager::update << Received: " << str;
+    ofLogNotice() <<"SerialManager::update << Num Bytes Received: " << bytesRemaining;
+    
     
     // check for error code
     if ( result == OF_SERIAL_ERROR ){
@@ -314,7 +343,7 @@ void SerialManager::update()
     }
     
     
-    this->parseData(bytes, numBytes);
+    this->parseData(bytes, bytesRequired);
 }
 
 
@@ -351,7 +380,7 @@ void SerialManager::sendRelayToggle(bool value)
     
     ofLogNotice() <<"SerialManager::sendRelayToggle ->  " << value;
     
-    unsigned char channel = 1;
+    unsigned char channel = 2;
     unsigned char data_value = value;
     string message="";
     message+= m_dataHeader.f1; message+= m_dataHeader.f2; message+= m_dataHeader.f3;
@@ -375,6 +404,6 @@ void SerialManager::printHex(unsigned char * buffer, int size)
     }
     std::string mystr = ss.str();
     
-    ofLogNotice() <<"UdpManager::SerialManager ->  hex: " << mystr;
+    ofLogNotice() <<"SerialManager::SerialManager ->  hex: " << mystr;
 }
 
