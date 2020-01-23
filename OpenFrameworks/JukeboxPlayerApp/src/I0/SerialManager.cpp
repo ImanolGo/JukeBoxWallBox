@@ -112,6 +112,7 @@ void SerialManager::autoConnect()
         {
             ofLogNotice() <<"SerialManager::setupSerial << Arduino connected to port " << device.getDeviceName();
             m_connected = true;
+            m_serial.flush();
             return;
         }
     }
@@ -277,6 +278,7 @@ bool SerialManager::parseData(unsigned char * buffer, int size)
     AppManager::getInstance().getGuiManager().setAudioMode(buffer[HEADER_SIZE+1]);
     AppManager::getInstance().getGuiManager().setAudioIndex(buffer[HEADER_SIZE]);
     
+    m_serial.flush();
     return true;
 }
 
