@@ -351,7 +351,7 @@ void SerialManager::sendRelayToggle(bool value)
     
     ofLogNotice() <<"SerialManager::sendRelayToggle ->  " << value;
     
-    unsigned char channel = 1;
+    unsigned char channel = 2;
     unsigned char data_value = value;
     string message="";
     message+= m_dataHeader.f1; message+= m_dataHeader.f2; message+= m_dataHeader.f3;
@@ -375,6 +375,6 @@ void SerialManager::printHex(unsigned char * buffer, int size)
     }
     std::string mystr = ss.str();
     
-    ofLogNotice() <<"UdpManager::SerialManager ->  hex: " << mystr;
+    ofLogNotice() <<"SerialManager::SerialManager ->  hex: " << mystr;
 }
 
