@@ -118,8 +118,8 @@ void IOManager::setup()
     Serial.println("IOManager::setup");
     initializeIO();
     initializeButtons();
-    //initializeRegisters();
-    //initializeOutputs();
+    initializeRegisters();
+    initializeOutputs();
    
 }
 
@@ -190,13 +190,16 @@ void IOManager::initializeOutputs()
     Serial.println("IOManager::initializeOutputs!"); 
     int offset = 15 - NUM_OUTPUTS;
     for(int i =0 ; i< NUM_OUTPUTS; i++){
-      outputs[i] = Output(&io1, offset+i); 
+      outputs[i] = Output(&io1, offset+i+1*i); 
       Serial.print("IOManager::added output ");  
       Serial.print(i);  
       Serial.print(", output: ");  
-      Serial.print(offset+i); 
+      Serial.print(offset+i+1*i); 
       Serial.println(" to io1"); 
     }
+
+    this->setOutput(0, 1);
+    this->setOutput(1, 0);
 }
 
 
@@ -215,8 +218,8 @@ void IOManager::setOutput(uint8_t id, bool value)
 void IOManager::update()
 {   
     updateButtons();
-    //updateRegisters();
-    //updateOutputs();   
+    updateRegisters();
+    updateOutputs();   
 }
 
 
