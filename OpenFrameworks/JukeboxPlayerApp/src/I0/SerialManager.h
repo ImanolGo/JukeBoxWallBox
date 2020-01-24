@@ -13,6 +13,10 @@
 #include "ofMain.h"
 #include "Manager.h"
 
+#define NUM_BYTES 1
+
+//#include "ofxSimpleSerial.h"
+
 
 //========================== class SerialManager =======================================
 //==============================================================================
@@ -24,18 +28,7 @@
 
 class SerialManager: public Manager
 {
-    static const int BAUD_RATE;
-    static const int HEADER_SIZE;
-    static const int DATA_SIZE;
-    
-    struct serial_header {
-        unsigned char f1;
-        unsigned char f2;
-        unsigned char f3;
-        unsigned char size;
-        unsigned char command;
-        unsigned char  channel;
-    };
+    static const int BAUD_RATE; 
     
 public:
     //! Constructor
@@ -58,14 +51,13 @@ public:
     
     bool getConnected() const {return m_connected;}
     
+    void onNewMessage(string & message);
     
 private:
     
     void readSerialSettings();
     
     void setupSerial();
-    
-    void setupHeaders();
     
     void autoConnect();
     
@@ -77,23 +69,23 @@ private:
     
     bool receivedConnected();
     
-    bool isMessage(unsigned char * buffer, int size);
+    bool isData(const string & message);
     
-    bool isData(unsigned char * buffer, int size);
+    bool isConnected(const string & message);
     
-    bool isConnected(unsigned char * buffer, int size);
-    
-    bool parseData(unsigned char * buffer, int size);
+    bool parseData(const string & message);
 
     void printHex(unsigned char * buffer, int size);
+
+    void writeString(string message);
     
 private:
     
-    ofSerial   m_serial;
-    bool       m_connected;
-    
-    serial_header    m_dataHeader;
-    serial_header    m_connectHeader;
+    ofSerial	  m_serial;
+    //ofxSimpleSerial	  m_serial;
+    bool                m_connected;
+    string			    m_messageBuffer;
+	unsigned char	    m_bytesReturned[NUM_BYTES];
     
     
 };
