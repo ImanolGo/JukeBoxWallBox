@@ -45,9 +45,10 @@ class LoraManager
     void initializeLora();
     void updateLora();
     bool parseMessage(uint8_t* _buffer, uint8_t bufferSize);
-    bool isMessage(uint8_t* _buffer, uint8_t bufferSize);
     bool isData(uint8_t* _buffer, uint8_t bufferSize);
     bool newMessage;
+
+    String getValue(String data, char separator, int index);
 
     uint8_t output_channel;
     uint8_t output_value;
@@ -121,7 +122,7 @@ void LoraManager::updateLora()
         if (this->rf95->recv(buf, &len))
         {
              RH_RF95::printBuffer("Received: ", buf, len);
-            if(this->isMessage(buf,len) && this->isData(buf, len))
+            if( this->isData(buf, len))
             {
                 this->parseMessage(buf,len);
                 
@@ -136,13 +137,11 @@ void LoraManager::updateLora()
 
 bool LoraManager::parseMessage(uint8_t* _buffer, uint8_t bufferSize)
 {
-    if(bufferSize < HEADER_SIZE + DATA_BYTES ){
-      return false;
-    }
-
-    output_channel = _buffer[HEADER_SIZE];
-    output_value = _buffer[HEADER_SIZE+1];
-
+    String message = String((char *)_buffer);
+    output_channel = (uint8_t) this->getValue(message, ',', CHANNEL_INDEX).toInt();
+    output_value = (uint8_t) this->getValue(message, ',', VALUE_INDEX).toInt();
+    
+    
     Serial.print("LoraManager::parseMessage -> output channel = "); Serial.print(output_channel);
     Serial.print(", value = "); Serial.println(output_value);
 
@@ -150,23 +149,9 @@ bool LoraManager::parseMessage(uint8_t* _buffer, uint8_t bufferSize)
     return true;
 }
 
-bool LoraManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
-{
-    if ( _buffer[0] == 0x10 && _buffer[1] == 0x41 && _buffer[2] == 0x37) 
-    { 
-        uint8_t data_size = _buffer[SIZE_INDEX];
-        if ( (bufferSize-HEADER_SIZE) == data_size ) 
-        {
-          return true; 
-        }
-    }
-
-    return false;
-}
-
 bool LoraManager::isData(uint8_t* _buffer, uint8_t bufferSize)
 {
-    if ( _buffer[COMMAND_INDEX] == 'd') { 
+    if ( _buffer[0] == 'd') { 
       return true;
     }
 
@@ -175,27 +160,38 @@ bool LoraManager::isData(uint8_t* _buffer, uint8_t bufferSize)
 
  bool LoraManager::sendButtonPressed(uint8_t id, uint8_t mode)
  {
-    uint8_t buffSize = HEADER_SIZE + DATA_BYTES;
-    uint8_t buff[buffSize];
-
-    buff[0] = 0x10; 
-    buff[1] = 0x41; 
-    buff[2] = 0x37; 
-    buff[3] = DATA_BYTES; 
-    buff[4] = 'd'; 
-    buff[5] = id; 
-    buff[6] = mode; 
+    String message = "d,";
+    message+= String(id, DEC); 
+    message+= ",";
+    message+= String(mode, DEC); 
 
     Serial.print("LoraManager::sendButtonPressed -> id = "); Serial.print(id);
     Serial.print(", mode = "); Serial.println(mode);
     
-    return this->sendMessage(buff, buffSize);
+    return this->sendMessage((uint8_t*)message.c_str(), message.length());
  }
 
 bool LoraManager::sendMessage(uint8_t* _buffer, uint8_t bufferSize)
 {   
      RH_RF95::printBuffer("Send: ", _buffer, bufferSize);
     return this->rf95->send(_buffer, bufferSize);    
+}
+
+String LoraManager::getValue(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
 

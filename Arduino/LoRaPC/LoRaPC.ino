@@ -28,6 +28,8 @@
 LoraManager loraManager;
 SerialManager serialManager(&loraManager);
 
+unsigned long StartTime = millis();
+
 
 void setup() 
 {
@@ -51,6 +53,15 @@ void loop()
     
     loraManager.update();
     serialManager.update();
+
+//     if(millis() - StartTime > 5000){
+//        StartTime = millis();
+//        Serial.print("d,");
+//        Serial.print(random(26));
+//        Serial.print(",");
+//        Serial.print(random(4));
+//        Serial.println("");
+//    }
     
 
     //delay(10);

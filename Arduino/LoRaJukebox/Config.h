@@ -5,10 +5,9 @@
  Protocol
  *************************************************************************/
 
-#define HEADER_SIZE 5
-#define SIZE_INDEX 3
-#define COMMAND_INDEX 4
-#define DATA_BYTES 2
+#define CHANNEL_INDEX 1
+#define VALUE_INDEX 2
+#define COMMAND_INDEX 0
 
 /*************************************************************************
  IO
