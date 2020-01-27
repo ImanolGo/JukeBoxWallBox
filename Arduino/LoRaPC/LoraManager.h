@@ -29,7 +29,7 @@ class LoraManager
     void setup();
     void update();
   
-    bool sendMessage(uint8_t* _buffer, uint8_t bufferSize);
+    bool sendMessage(String message);
 
     bool isNewMessage() {return  newMessage;}
 
@@ -43,7 +43,7 @@ class LoraManager
     void initializeLora();
     void updateLora();
     void copyBuffer(uint8_t* _buffer, uint8_t bufferSize);
-    bool isMessage(uint8_t* _buffer, uint8_t bufferSize);
+    bool isData(uint8_t* _buffer, uint8_t bufferSize);
     bool newMessage;
 
     uint8_t received_buffer[RH_RF95_MAX_MESSAGE_LEN];
@@ -140,7 +140,7 @@ void LoraManager::updateLora()
             
    
              //newMessage = true;
-            if(this->isMessage(buf,len))
+            if(this->isData(buf,len))
             { 
                 this->copyBuffer(buf, len);
                 newMessage = true;
@@ -170,7 +170,7 @@ void LoraManager::copyBuffer(uint8_t* _buffer, uint8_t bufferSize)
     
 }
 
-bool LoraManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
+bool LoraManager::isData(uint8_t* _buffer, uint8_t bufferSize)
 {
 
 //    #ifdef DEBUG
@@ -179,24 +179,18 @@ bool LoraManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
 //          Serial.print("LoraManager::_buffer[2]-> "); Serial.println(_buffer[2]);
 //     #endif
 
+     ;
         
-    if ( _buffer[0] == 0x10 && _buffer[1] == 0x41 && _buffer[2] == 0x37) 
+    if ( _buffer[0] == 'd') 
     { 
-        uint8_t data_size = _buffer[SIZE_INDEX];
 
-//         #ifdef DEBUG
-//          Serial.print("LoraManager::data_size -> "); Serial.println(data_size);
-//        #endif
-        
-        if ( (bufferSize-HEADER_SIZE) == data_size ) 
-        {
-          #ifdef DEBUG
-          Serial.println("LoraManager::isMessage -> true");
+       #ifdef DEBUG
+                Serial.println("LoraManager::isMessage -> true");
         #endif
-      
-          return true; 
-        }
-    }
+            
+                return true; 
+     }
+     
 
      #ifdef DEBUG
           Serial.println("LoraManager::isMessage -> false");
@@ -205,7 +199,7 @@ bool LoraManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
     return false;
 }
 
-bool LoraManager::sendMessage(uint8_t* _buffer, uint8_t bufferSize)
+bool LoraManager::sendMessage(String message)
 {       
-    return this->rf95->send(_buffer, bufferSize);    
+    return this->rf95->send((uint8_t*)message.c_str(), message.length());    
 }

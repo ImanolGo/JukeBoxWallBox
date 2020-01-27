@@ -13,8 +13,6 @@
 
 
 const int SerialManager::BAUD_RATE = 115200;
-const int SerialManager::HEADER_SIZE = 5;
-const int SerialManager::DATA_SIZE = 2;
 
 
 SerialManager::SerialManager(): Manager(), m_connected(false)
@@ -25,6 +23,7 @@ SerialManager::SerialManager(): Manager(), m_connected(false)
 SerialManager::~SerialManager()
 {
     ofLogNotice() << "SerialManager::destructor";
+    m_serial.close();
 }
 
 
@@ -37,28 +36,11 @@ void SerialManager::setup()
     
     Manager::setup();
     
-    this->setupHeaders();
     this->setupSerial();
     this->sendSampleToggle(1);
     this->sendRelayToggle(0);
     
     ofLogNotice() <<"SerialManager::initialized" ;
-}
-
-
-void SerialManager::setupHeaders()
-{
-    m_dataHeader.f1 = 0x10;
-    m_dataHeader.f2 = 0x41;
-    m_dataHeader.f3 = 0x37;
-    m_dataHeader.size = 0;
-    m_dataHeader.command = 'd';
-    
-    m_connectHeader.f1 = 0x10;
-    m_connectHeader.f2 = 0x41;
-    m_connectHeader.f3 = 0x37;
-    m_connectHeader.size = 1;
-    m_connectHeader.command = 'c';
 }
 
 
@@ -112,7 +94,6 @@ void SerialManager::autoConnect()
         {
             ofLogNotice() <<"SerialManager::setupSerial << Arduino connected to port " << device.getDeviceName();
             m_connected = true;
-            m_serial.flush();
             return;
         }
     }
@@ -145,17 +126,13 @@ bool SerialManager::checkConnection(int portNum)
 
 void SerialManager::sendConnection()
 {
-    unsigned char connected = 'c';
-    
-    string message="";
-    message+= m_connectHeader.f1; message+= m_connectHeader.f2; message+= m_connectHeader.f3;
-    message+=  m_connectHeader.size;
-    message+=m_connectHeader.command;
-    message+=connected;
-    
-    
+    bool connected = 0;
+
+    string message = "";
+    message+= "c,";
+    message+= ofToString(connected); message+= '|';
+
     ofLogNotice() <<"SerialManager::sendConnection << Sent: " << message;
-    
     m_serial.writeBytes((unsigned char *) message.c_str(), message.length());
 }
 
@@ -163,86 +140,67 @@ bool SerialManager::receivedConnected()
 {
     ofLogNotice() <<"SerialManager::checkConnection << Serial Available: " << m_serial.available();
     
-    
-    int numBytes = m_serial.available();
-    
-    if ( numBytes == 0 )
-    {
-        return false;
-    }
-    
-    
-    unsigned char bytes[numBytes];
-    
-    int result = m_serial.readBytes( bytes, numBytes );
-    
-    string str((char *)bytes);
-    
-    ofLogNotice() <<"SerialManager::checkConnection << Received: " << str;
-    
-    // check for error code
-    if ( result == OF_SERIAL_ERROR ){
-        // something bad happened
-        ofLog( OF_LOG_ERROR, "unrecoverable error reading from serial" );
-    }
-    else if ( result == OF_SERIAL_NO_DATA ){
-        ofLog( OF_LOG_ERROR, "no data reading from serial" );
-    }
-    
-    
-    return  this->isConnected(bytes, numBytes);
+     string message = "";
+
+    // if we've got new bytes
+	if ( m_serial.available() > 0)
+	{
+		// we will keep reading until nothing is left
+		while ( m_serial.available() > 0)
+		{
+			// we'll put the incoming bytes into bytesReturned
+			 m_serial.readBytes(m_bytesReturned,  NUM_BYTES);
+
+			// if we find the splitter we put all the buffered messages
+			//   in the final message, stop listening for more data and
+			//   notify a possible listener
+			// else we just keep filling the buffer with incoming bytes.
+			if (*m_bytesReturned == '\n')
+			{
+				message = m_messageBuffer;
+				m_messageBuffer = "";
+                // clear the message buffer
+		        memset(m_bytesReturned, 0, NUM_BYTES);
+                ofLogNotice() <<"SerialManager::receivedConnected -> NewMessage :  " << message;
+                return  this->isConnected(message);
+			}
+			else
+			{
+                m_messageBuffer += *m_bytesReturned;
+			}
+			//cout << "  messageBuffer: " << messageBuffer << "\n";
+		}
+
+	}
+
+
+    // clear the message buffer
+    memset(m_bytesReturned, 0, NUM_BYTES);
+    return false;
 }
 
 
-bool SerialManager::isMessage(unsigned char * buffer, int size)
+
+bool SerialManager::isConnected(const string & message)
 {
-    
-    if(buffer[0] != m_connectHeader.f1 ){
-         ofLogNotice() <<"SerialManager::buffer[0] not 0x10 ";
-    }
 
-    if(buffer[1] != m_connectHeader.f2 ){
-    ofLogNotice() <<"SerialManager::buffer[1] not 0x41 ";
-    }
-
-    if(buffer[2] != m_connectHeader.f3 ){
-    ofLogNotice() <<"SerialManager::buffer[2] not 0x37 ";
-    }
+    vector<string> input = ofSplitString(message, ",");
     
-    if(buffer[0] != m_connectHeader.f1  && buffer[1] != m_connectHeader.f2  && buffer[2] != m_connectHeader.f3 ){
-        ofLogNotice() <<"SerialManager::isMessage -> FALSE ";
-        return false;
-    }
-    
-    
-    ofLogNotice() <<"SerialManager::isMessage -> TRUE ";
-    return true;
-}
-
-bool SerialManager::isConnected(unsigned char * buffer, int size)
-{
-    if(!this->isMessage(buffer, size)){
-        return false;
-    }
-    
-    if(buffer[4] == 'c')
+    if(input.size()>0 && input.front() == "c")
     {
         ofLogNotice() <<"SerialManager::isConnected -> TRUE ";
         return true;
     }
     
-    
     ofLogNotice() <<"SerialManager::isConnected -> FALSE ";
     return false;
 }
 
-bool SerialManager::isData(unsigned char * buffer, int size)
+bool SerialManager::isData(const string & message)
 {
-    if(!this->isMessage(buffer, size)){
-        return false;
-    }
+   vector<string> input = ofSplitString(message, ",");
     
-    if(buffer[4] == 'd')
+    if(input.size()>0 && input.front() == "d")
     {
         ofLogNotice() <<"SerialManager::isData -> TRUE ";
         return true;
@@ -253,32 +211,26 @@ bool SerialManager::isData(unsigned char * buffer, int size)
     return false;
 }
 
-bool SerialManager::parseData(unsigned char * buffer, int size)
+bool SerialManager::parseData(const string & message)
 {
-    this->printHex(buffer,size);
 
-    if(!this->isData(buffer, size)){
+    vector<string> input = ofSplitString(message, ",");
+
+      if(!this->isData(message)){
         return false;
     }
     
-    int dataSize = (int) buffer[3];
-    
-    if(dataSize > (size - HEADER_SIZE))
+    if(input.size()<3)
     {
-        ofLogNotice() <<"SerialManager::parseData -> data size incorrect ";
+        ofLogNotice() <<"SerialManager::parseData -> data size too small -> " << input.size() ;
         return false;
     }
     
-    if(dataSize < DATA_SIZE)
-    {
-        ofLogNotice() <<"SerialManager::parseData -> data size too small ";
-        return false;
-    }
-    
-    AppManager::getInstance().getGuiManager().setAudioMode(buffer[HEADER_SIZE+1]);
-    AppManager::getInstance().getGuiManager().setAudioIndex(buffer[HEADER_SIZE]);
-    
-    m_serial.flush();
+    int audioMode = ofToInt(input[2]);
+    int audioIndex= ofToInt(input[1]);
+    AppManager::getInstance().getGuiManager().setAudioMode(audioMode);
+    AppManager::getInstance().getGuiManager().setAudioIndex(audioIndex);
+
     return true;
 }
 
@@ -289,54 +241,54 @@ void SerialManager::update()
     if(!m_connected){
         return;
     }
-    
-    // we want to read 7 bytes
-    int bytesRequired = HEADER_SIZE + DATA_SIZE;
-    unsigned char bytes[bytesRequired];
-    int bytesRemaining = bytesRequired;
 
-    // loop until we've read everything
-    while ( bytesRemaining > 0 )
-    {
-        // check for data
-        if ( m_serial.available() > 0 )
-        {
-            // try to read - note offset into the bytes[] array, this is so
-            // that we don't overwrite the bytes we already have
-            int bytesArrayOffset = bytesRequired - bytesRemaining;
-            int result = m_serial.readBytes( &bytes[bytesArrayOffset],
-            bytesRemaining );
-        
-            // check for error code
-            if ( result == OF_SERIAL_ERROR )
-            {
-                // something bad happened
-                ofLog( OF_LOG_ERROR, "unrecoverable error reading from serial" );
-                // bail out
-            break;
-            }
-            else if ( result == OF_SERIAL_NO_DATA )
-            {
-                // nothing was read, try again
-            }
-            else
-            {
-                // we read some data!
-                bytesRemaining -= result;
-            }
-        }
-    }
+      string message = "";
+
+    // if we've got new bytes
+	if ( m_serial.available() > 0)
+	{
+		// we will keep reading until nothing is left
+		while ( m_serial.available() > 0)
+		{
+			// we'll put the incoming bytes into bytesReturned
+			 m_serial.readBytes(m_bytesReturned,  NUM_BYTES);
+
+			// if we find the splitter we put all the buffered messages
+			//   in the final message, stop listening for more data and
+			//   notify a possible listener
+			// else we just keep filling the buffer with incoming bytes.
+			if (*m_bytesReturned == '\n')
+			{
+				message = m_messageBuffer;
+				m_messageBuffer = "";
+                // clear the message buffer
+		        memset(m_bytesReturned, 0, NUM_BYTES);
+
+                ofLogNotice() <<"SerialManager::update -> NewMessage :  " << message;
+                this->parseData(message);
+                break;
+			}
+			else
+			{
+                m_messageBuffer += *m_bytesReturned;
+			}
+			//cout << "  messageBuffer: " << messageBuffer << "\n";
+		}
+
+	}
 
 
+    // clear the message buffer
+    memset(m_bytesReturned, 0, NUM_BYTES);
 
-    string str((char *)bytes);
-    
-    ofLogNotice() <<"SerialManager::update << Received: " << str;
-    ofLogNotice() <<"SerialManager::update << Num Bytes Received: " << bytesRemaining;
-    
-    this->parseData(bytes, bytesRequired);
 }
 
+
+void SerialManager::onNewMessage(string & message)
+{
+    ofLogNotice() <<"SerialManager::onNewMessage ->  " << message;
+	this->parseData(message);
+}
 
 void SerialManager::sendSampleToggle(bool value)
 {
@@ -344,22 +296,18 @@ void SerialManager::sendSampleToggle(bool value)
         return;
     }
 
-    
     ofLogNotice() <<"SerialManager::sendSampleToggle ->  " << value;
     
-    unsigned char channel = 0;
-    unsigned char data_value = value;
-    string message="";
-    message+= m_dataHeader.f1; message+= m_dataHeader.f2; message+= m_dataHeader.f3;
-    m_dataHeader.size = DATA_SIZE;
-    message+=  m_dataHeader.size;
-    message+=m_dataHeader.command;
-    message+=channel;
-    message+=data_value;
-    
-    m_serial.writeBytes((unsigned char *) message.c_str(), message.length());
+    int channel = 0;
 
-    this->printHex((unsigned char *) message.c_str(), message.length());
+    string message = "";
+    message+= "d,";
+    message+= ofToString(channel); message+= ",";
+    message+= ofToString(value); message+= '|';
+
+    ofLogNotice() <<"SerialManager::sendSampleToggle ->  message: " << message;
+
+    this->writeString(message);
 }
 
 void SerialManager::sendRelayToggle(bool value)
@@ -370,20 +318,19 @@ void SerialManager::sendRelayToggle(bool value)
     
     
     ofLogNotice() <<"SerialManager::sendRelayToggle ->  " << value;
-    
-    unsigned char channel = 2;
-    unsigned char data_value = value;
-    string message="";
-    message+= m_dataHeader.f1; message+= m_dataHeader.f2; message+= m_dataHeader.f3;
-    m_dataHeader.size = DATA_SIZE;
-    message+=  m_dataHeader.size;
-    message+=m_dataHeader.command;
-    message+=channel;
-    message+=data_value;
-    
-    m_serial.writeBytes((unsigned char *) message.c_str(), message.length());
-    this->printHex((unsigned char *) message.c_str(), message.length());
-    
+
+    int channel = 2;
+
+    string message = "";
+    message+= "d,";
+    message+= ofToString(channel); message+= ",";
+    message+= ofToString(value); message+= '|';
+
+    ofLogNotice() <<"SerialManager::sendRelayToggle ->  message: " << message;
+
+
+    this->writeString(message);
+
 }
 
 
@@ -398,3 +345,9 @@ void SerialManager::printHex(unsigned char * buffer, int size)
     ofLogNotice() <<"SerialManager::SerialManager ->  hex: " << mystr;
 }
 
+void SerialManager::writeString(string message)
+{
+	unsigned char* chars = (unsigned char*) message.c_str(); // cast from string to unsigned char*
+	int length = message.length();
+	m_serial.writeBytes(chars, length);
+}

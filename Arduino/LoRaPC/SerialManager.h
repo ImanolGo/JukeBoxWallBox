@@ -26,7 +26,7 @@ class SerialManager
     void setup();
     void update();
 
-    void write(uint8_t* _buffer, uint8_t bufferSize);
+    void write(String & message);
 
   private:
 
@@ -34,12 +34,13 @@ class SerialManager
     void updateSerial();
     void updateLora();
     void sendConnected();
-    void parseMessage(uint8_t* _buffer, uint8_t bufferSize);
-    bool isMessage(uint8_t* _buffer, uint8_t bufferSize);
-    bool isData(uint8_t* _buffer, uint8_t bufferSize);
-    bool isConnection(uint8_t* _buffer, uint8_t bufferSize);
+    void parseMessage(String& message);
+    bool isData(String& message);
+    bool isConnection(String& message);
+
+    String getValue(String data, char separator, int index);
   
-    bool _connected;
+    bool m_connected;
   
 };
 
@@ -47,7 +48,8 @@ class SerialManager
 SerialManager::SerialManager(LoraManager* loraManager)
 {
     this->loraManager=loraManager;
-    _connected = false;
+    m_connected = false;
+
 }
 
 void SerialManager::setup()
@@ -76,19 +78,12 @@ void SerialManager::update()
 
 void SerialManager::updateSerial()
 {     
+      if(Serial.available())
+      {
+        String message = Serial.readStringUntil('|');
+        this->parseMessage(message);
 
-    uint8_t numBytes = Serial.available();
-    
-    if (numBytes > 0) 
-    {
-         uint8_t buf[numBytes];
-         Serial.readBytes((char *) buf,numBytes);
-         //this->loraManager->sendMessage(buf, numBytes);
-         digitalWrite(LED_BUILTIN, HIGH);
-         this->parseMessage(buf, numBytes);
-         digitalWrite(LED_BUILTIN, LOW);
-    }
-    
+      }
 }
 
 
@@ -98,75 +93,59 @@ void SerialManager::updateLora()
          #ifdef DEBUG
           Serial.println("SerialManager::isMessage -> true");
         #endif
-        
-        this->write(this->loraManager->getBuffer(), this->loraManager->getSize());
+
+        String message = String((char*)this->loraManager->getBuffer());
+        Serial.println(message);
+    
+        //Serial.write(this->loraManager->getBuffer(), this->loraManager->getSize());
+
     }
 }
 
-void SerialManager::parseMessage(uint8_t* buf, uint8_t len)
+void SerialManager::parseMessage(String& message)
 {
-      if(this->isMessage(buf,len))
-      {
-          if(this->isConnection(buf, len)){
-            this->sendConnected();
-            
-          }
-          else if(this->isData(buf, len)){
-              this->loraManager->sendMessage(buf, len);
-          } 
-         
+     #ifdef DEBUG
+          Serial.println("SerialManager::parseMessage");
+      #endif
+        
+     if(this->isConnection(message)){
+        this->sendConnected();
+        
       }
+      else if(this->isData(message)){
+//          String m = "SerialManager::parseMessage: Output -> channel = ";
+//          m+= this->getValue(message,',', 1);
+//          m+= ", value = ";
+//          m+= this->getValue(message,',',2);
+//          Serial.println(m);
+          this->loraManager->sendMessage(message);
+      } 
 }
 
 
 void SerialManager::sendConnected()
 {
-      int len = HEADER_SIZE+1;
-      byte buf[len];
-      buf[0] = 0x10;
-      buf[1] = 0x41;
-      buf[2] = 0x37;
-      buf[3] = 1;
-      buf[4] = 'c';
-      buf[5] = 'c';
+      Serial.print("c");
+      Serial.print(",");
+      Serial.print("1");
+      Serial.println("");
       
-      Serial.write(buf, len);
-      _connected = true;
+      m_connected = true;
 }
 
 
-void SerialManager::write(uint8_t* _buffer, uint8_t bufferSize)
+void SerialManager::write(String& message)
 {
     #ifdef DEBUG
-          Serial.print("SerialManager::write -> num bytes: "); Serial.println(bufferSize);
+          Serial.print("SerialManager::write -> num bytes: "); Serial.println(message.length());
     #endif
         
-    Serial.write(_buffer, bufferSize);
+    Serial.write(message.c_str(), message.length());
 }
 
-bool SerialManager::isMessage(uint8_t* _buffer, uint8_t bufferSize)
+bool SerialManager::isData(String& message)
 {
-    if ( _buffer[0] == 0x10 && _buffer[1] == 0x41 && _buffer[2] == 0x37) 
-    { 
-        uint8_t data_size = _buffer[SIZE_INDEX];
-        if ( (bufferSize-HEADER_SIZE) == data_size ) 
-        {
-           //Serial.println("SerialManager::isMessage -> true");
-          return true; 
-        }
-    }
-
-     #ifdef DEBUG
-          Serial.println("SerialManager::isMessage -> false");
-    #endif
-   
-    return false;
-}
-
-
-bool SerialManager::isData(uint8_t* _buffer, uint8_t bufferSize)
-{
-    if ( _buffer[COMMAND_INDEX] == 'd') { 
+    if (message.charAt(0) == 'd') { 
       return true;
     }
 
@@ -174,9 +153,9 @@ bool SerialManager::isData(uint8_t* _buffer, uint8_t bufferSize)
 }
 
 
-bool SerialManager::isConnection(uint8_t* _buffer, uint8_t bufferSize)
+bool SerialManager::isConnection(String& message)
 {
-    if ( _buffer[COMMAND_INDEX] == 'c') { 
+    if (message.charAt(0) == 'c') { 
       #ifdef DEBUG
           Serial.println("SerialManager::isConnection -> true");
       #endif
@@ -187,4 +166,22 @@ bool SerialManager::isConnection(uint8_t* _buffer, uint8_t bufferSize)
           Serial.println("SerialManager::isConnection -> false");
       #endif
     return false;
+}
+
+
+String SerialManager::getValue(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
