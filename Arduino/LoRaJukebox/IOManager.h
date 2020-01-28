@@ -150,6 +150,7 @@ void IOManager::initializeButtons()
       
       buttons1[i] = Bounce();
       buttons1[i].attach(&io1, i, INPUT_PULLUP); 
+      buttons1[i].interval(50);
       Serial.print("JukeBoxAllInputs::added button ");  
       Serial.print(i);  
       Serial.println(" to io1");  
@@ -159,6 +160,7 @@ void IOManager::initializeButtons()
       
       buttons2[i] = Bounce();
       buttons2[i].attach(&io2, i, INPUT_PULLUP); 
+      buttons2[i].interval(50);
       Serial.print("JukeBoxAllInputs::added button ");  
       Serial.print(i);  
       Serial.println(" to io2");  
@@ -176,6 +178,7 @@ void IOManager::initializeRegisters()
  
       registers[id] = Bounce();
       registers[id].attach(&io2, offset+i, INPUT_PULLUP); 
+      registers[id].interval(50);
       Serial.print("IOManager::added register ");  
       Serial.print(id);  
       Serial.print(", input: ");  
@@ -283,26 +286,21 @@ void IOManager::updateRegisters()
         registers[i].update();  
     }
 
-    //mode = registers[0].read() + 2*registers[1].read() + 4*registers[2].read();
+    int mode = registers[0].read() + 2*registers[1].read() + 4*registers[2].read();
 
-    if(registers[2].read() == 1){
+    if(mode == 0){
+      _mode = 0;
+    }
+    else if(mode == 1){
+      _mode = 1;
+    }
+    else if(mode ==3 ){
+      _mode = 2;
+    }
+    else if(mode ==7 ){
       _mode = 3;
     }
 
-    else if(registers[1].read() == 1)
-    {
-      _mode = 2;
-    }
-
-     else if(registers[0].read() == 1)
-    {
-      _mode = 1;
-    }
-
-    else
-    {
-      _mode = 0;
-    }
 
     if(prev_mode!=_mode){
       prev_mode = _mode;

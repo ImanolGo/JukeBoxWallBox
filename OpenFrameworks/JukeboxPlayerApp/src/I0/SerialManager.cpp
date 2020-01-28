@@ -319,7 +319,7 @@ void SerialManager::sendRelayToggle(bool value)
     
     ofLogNotice() <<"SerialManager::sendRelayToggle ->  " << value;
 
-    int channel = 2;
+    int channel = 1;
 
     string message = "";
     message+= "d,";
