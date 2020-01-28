@@ -163,7 +163,9 @@ void LoraManager::copyBuffer(uint8_t* _buffer, uint8_t bufferSize)
       }
 
       receivedLength = bufferSize;
-       
+
+      memset(received_buffer, 0, sizeof(received_buffer));
+      
       for(int i=0; i<receivedLength; i++){
         received_buffer[i] = _buffer[i];
       }

@@ -286,7 +286,7 @@ void IOManager::updateRegisters()
         registers[i].update();  
     }
 
-    int mode = registers[0].read() + 2*registers[1].read() + 4*registers[2].read();
+    int mode = registers[0].read() + registers[1].read() + registers[2].read();
 
     if(mode == 0){
       _mode = 0;
@@ -294,10 +294,10 @@ void IOManager::updateRegisters()
     else if(mode == 1){
       _mode = 1;
     }
-    else if(mode ==3 ){
+    else if(mode ==2 ){
       _mode = 2;
     }
-    else if(mode ==7 ){
+    else if(mode ==3 ){
       _mode = 3;
     }
 

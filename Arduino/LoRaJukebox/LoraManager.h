@@ -163,7 +163,8 @@ bool LoraManager::isData(uint8_t* _buffer, uint8_t bufferSize)
     String message = "d,";
     message+= String(id, DEC); 
     message+= ",";
-    message+= String(mode, DEC); 
+    message+= String(mode, DEC);
+  
 
     Serial.print("LoraManager::sendButtonPressed -> id = "); Serial.print(id);
     Serial.print(", mode = "); Serial.println(mode);
