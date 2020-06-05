@@ -45,9 +45,9 @@ public:
     
     //void onSetColor(const ofColor& color);
     
-    void sendSampleToggle(bool value);
+    void sendLightToggle(bool & value);
     
-    void sendRelayToggle(bool value);
+    void sendRelayToggle(bool & value);
     
     bool getConnected() const {return m_connected;}
     

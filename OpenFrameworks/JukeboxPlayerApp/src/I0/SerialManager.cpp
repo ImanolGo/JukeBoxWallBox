@@ -35,10 +35,12 @@ void SerialManager::setup()
         return;
     
     Manager::setup();
-    
+	bool light = true;
+	bool relay = false;
+
     this->setupSerial();
-    this->sendSampleToggle(1);
-    this->sendRelayToggle(0);
+	AppManager::getInstance().getGuiManager().setLightValue(true);
+	AppManager::getInstance().getGuiManager().setRelayValue(false);
     
     ofLogNotice() <<"SerialManager::initialized" ;
 }
@@ -290,13 +292,13 @@ void SerialManager::onNewMessage(string & message)
 	this->parseData(message);
 }
 
-void SerialManager::sendSampleToggle(bool value)
+void SerialManager::sendLightToggle(bool & value)
 {
     if(!m_connected){
         return;
     }
 
-    ofLogNotice() <<"SerialManager::sendSampleToggle ->  " << value;
+    ofLogNotice() <<"SerialManager::sendLightToggle ->  " << value;
     
     int channel = 0;
 
@@ -305,12 +307,12 @@ void SerialManager::sendSampleToggle(bool value)
     message+= ofToString(channel); message+= ",";
     message+= ofToString(value); message+= '|';
 
-    ofLogNotice() <<"SerialManager::sendSampleToggle ->  message: " << message;
+    ofLogNotice() <<"SerialManager::sendLightToggle ->  message: " << message;
 
     this->writeString(message);
 }
 
-void SerialManager::sendRelayToggle(bool value)
+void SerialManager::sendRelayToggle(bool & value)
 {
     if(!m_connected){
         return;

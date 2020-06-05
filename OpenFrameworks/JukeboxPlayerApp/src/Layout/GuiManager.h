@@ -59,6 +59,10 @@ public:
     void setAudioIndex(int value);
     
     void setSerialConnected(bool value);
+
+	void setRelayValue(bool value);
+
+	void setLightValue(bool value);
     
     void setIndex(int& index);
     
@@ -85,6 +89,8 @@ private:
     
     ofParameter<float>    m_guiFPS;
     ofParameter<bool>     m_isSerial;
+	ofParameter<bool>     m_relay;
+	ofParameter<bool>     m_light;
     
     vector<ofParameter<bool>> m_modeVector;
     vector<ofParameter<bool>> m_indexVector;

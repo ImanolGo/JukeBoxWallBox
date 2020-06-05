@@ -52,14 +52,23 @@ void GuiManager::setup()
 
 void GuiManager::setupGuiParameters()
 {
-    
+	auto serialManager = &AppManager::getInstance().getSerialManager();
+
    // m_gui.setPosition(MARGIN, MARGIN);
     //m_gui.setPosition(20, 20);
     m_gui.add(m_guiFPS.set("FPS", 0, 0, 60));
     
-    m_isSerial.set("Serial",  AppManager::getInstance().getSerialManager().getConnected());
+    m_isSerial.set("Serial", serialManager->getConnected());
+
+	m_relay.set("Relay",false);
+	m_relay.addListener(serialManager, &SerialManager::sendRelayToggle);
+
+	m_light.set("Light", false);
+	m_light.addListener(serialManager, &SerialManager::sendLightToggle);
     
     m_gui.add(m_isSerial);
+	m_gui.add(m_relay);
+	m_gui.add(m_light);
     
 }
 
@@ -196,4 +205,13 @@ void GuiManager::setSerialConnected(bool value)
     m_isSerial = value;
 }
 
+void GuiManager::setRelayValue(bool value)
+{
+	m_relay = value;
+}
+
+void GuiManager::setLightValue(bool value)
+{
+	m_light = value;
+}
 

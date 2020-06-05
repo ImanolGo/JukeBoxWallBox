@@ -196,9 +196,9 @@ void AudioManager::updatePlayer()
     
     if(m_isPlaying && !m_soundPlayer.isPlaying()){
         m_isPlaying = false;
-        AppManager::getInstance().getSerialManager().sendSampleToggle(1);
+		AppManager::getInstance().getGuiManager().setLightValue(true);
         ofSleepMillis(200);
-        AppManager::getInstance().getSerialManager().sendRelayToggle(1);
+		AppManager::getInstance().getGuiManager().setRelayValue(true);
         m_timerRelay.start(false,true);
     }
 }
@@ -251,7 +251,7 @@ bool AudioManager::playSample(string path)
 
         EffectSettings settings; settings.animationTime = FADE_TIME_S;
         AppManager::getInstance().getVisualEffectsManager().createValueEffect(m_audioVolume, 1.0, settings);
-        AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+		AppManager::getInstance().getGuiManager().setLightValue(false);
         m_isPlaying = true;
 
         return true;
@@ -307,7 +307,7 @@ bool AudioManager::changeSample(int value)
     ofLogNotice() <<"AudioManager::changeSample -> Path: " << m_currentSamplePath;
     
     m_timerSong.start(false,true);
-    AppManager::getInstance().getSerialManager().sendSampleToggle(0);
+	AppManager::getInstance().getGuiManager().setLightValue(false);
     this->updateText();
     this->stopSample();
     
@@ -324,8 +324,7 @@ void AudioManager::timerCompleteHandlerSong( int &args )
 void AudioManager::timerCompleteHandlerRelay( int &args )
 {
     ofLogNotice() <<"AudioManager::timerCompleteHandlerRelay";
-    AppManager::getInstance().getSerialManager().sendRelayToggle(0);
-    
+	AppManager::getInstance().getGuiManager().setRelayValue(false);
 
 }
 
