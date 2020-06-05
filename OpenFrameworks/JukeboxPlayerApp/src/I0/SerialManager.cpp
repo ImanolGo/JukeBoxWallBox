@@ -230,8 +230,8 @@ bool SerialManager::parseData(const string & message)
     
     int audioMode = ofToInt(input[2]);
     int audioIndex= ofToInt(input[1]);
-    AppManager::getInstance().getGuiManager().setAudioMode(audioMode);
-    AppManager::getInstance().getGuiManager().setAudioIndex(audioIndex);
+   // AppManager::getInstance().getGuiManager().setAudioMode(audioMode);
+    //AppManager::getInstance().getGuiManager().setAudioIndex(audioIndex);
 
     return true;
 }
@@ -294,6 +294,7 @@ void SerialManager::onNewMessage(string & message)
 
 void SerialManager::sendLightToggle(bool & value)
 {
+
     if(!m_connected){
         return;
     }
@@ -317,7 +318,6 @@ void SerialManager::sendRelayToggle(bool & value)
     if(!m_connected){
         return;
     }
-    
     
     ofLogNotice() <<"SerialManager::sendRelayToggle ->  " << value;
 

@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Manager.h"
-#include "ofxGuiExtended.h"
+#include "ofxGui.h"
 
 
 //========================== class GuiManager ==============================
@@ -54,29 +54,19 @@ public:
     
     int getWidth() {return GUI_WIDTH;}
     
-    void setAudioMode(int value);
-    
-    void setAudioIndex(int value);
-    
     void setSerialConnected(bool value);
 
 	void setRelayValue(bool value);
 
 	void setLightValue(bool value);
-    
-    void setIndex(int& index);
-    
-    void setMode(int& index);
+
+	void setAudioMode(int value);
+
+	void setAudioIndex(int value);
     
 private:
     
     void setupGuiParameters();
-    
-    void setupModesGui();
-    
-    void setupAudioGui();
-    
-    void drawRectangle();
     
     void drawGui();
 
@@ -85,32 +75,12 @@ private:
     
 private:
     
-    ofxGui             m_gui;
+	ofxPanel             m_gui;
     
     ofParameter<float>    m_guiFPS;
     ofParameter<bool>     m_isSerial;
 	ofParameter<bool>     m_relay;
 	ofParameter<bool>     m_light;
-    
-    vector<ofParameter<bool>> m_modeVector;
-    vector<ofParameter<bool>> m_indexVector;
-    
-    //mode panel
-    ofxGuiPanel*  m_modePanel;
-    ofxGuiGroup*  m_modeToggles;
-    
-    //sample panel
-    ofxGuiPanel* m_indexPanel;
-    ofxGuiGroup* m_indexToggles;
-    
-    //color panel
-    ofxGuiPanel* colorPanel;
-    ofxGuiGroup *colorToggles;
-    
-    ofParameterGroup        m_modes;
-    ofParameterGroup        m_indexes;
-    vector<ofColor>         m_colors;
-    int                     m_switchColor;
     
     
     bool        m_showGui;  //It defines the whether the gui should be shown or not

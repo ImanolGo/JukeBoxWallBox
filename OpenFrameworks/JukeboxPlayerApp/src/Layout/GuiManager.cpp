@@ -19,7 +19,7 @@ const string GuiManager::GUI_SETTINGS_NAME = "GUI";
 const float GuiManager::GUI_WIDTH = 200;
 
 
-GuiManager::GuiManager(): Manager(), m_showGui(true), m_switchColor(0)
+GuiManager::GuiManager(): Manager(), m_showGui(true)
 {
     //Intentionally left empty
 }
@@ -41,8 +41,8 @@ void GuiManager::setup()
     
     
     this->setupGuiParameters();
-   // this->setupModesGui();
-    //this->setupAudioGui();
+	// this->setupModesGui();
+ //this->setupAudioGui();
     this->loadGuiValues();
 
     
@@ -56,6 +56,7 @@ void GuiManager::setupGuiParameters()
 
    // m_gui.setPosition(MARGIN, MARGIN);
     //m_gui.setPosition(20, 20);
+	m_gui.setup("GUI"); 
     m_gui.add(m_guiFPS.set("FPS", 0, 0, 60));
     
     m_isSerial.set("Serial", serialManager->getConnected());
@@ -70,41 +71,6 @@ void GuiManager::setupGuiParameters()
 	m_gui.add(m_relay);
 	m_gui.add(m_light);
     
-}
-
-void GuiManager::setupModesGui()
-{
-    m_modes.setName("MODES");
-    for(int i = 0; i <  AudioManager::NUM_MODES; i++)
-    {
-        string modeName = "MODE: " + ofToString(i);
-        
-        ofParameter<bool> parameter;
-        parameter.set(modeName, false);
-        m_modeVector.push_back(parameter);
-        m_modes.add(m_modeVector.back());
-    }
-    
-    
-    m_modePanel = m_gui.addPanel(m_modes);
-    
-}
-
-
-void GuiManager::setupAudioGui()
-{
-    m_indexes.setName("SAMPLES");
-    for(int i = 0; i <  AudioManager::NUM_SAMPLES; i++)
-    {
-        string sampleName = "SAMPLE: " + ofToString(i);
-        
-        ofParameter<bool> parameter;
-        parameter.set(sampleName, false);
-        m_indexVector.push_back(parameter);
-        m_indexes.add(m_indexVector.back());
-    }
-    
-     m_indexPanel = m_gui.addPanel(m_indexes);
 }
 
 
@@ -129,7 +95,7 @@ void GuiManager::draw()
 void GuiManager::drawGui()
 {
     ofEnableAlphaBlending();
-   // m_gui.draw();
+    m_gui.draw();
     ofDisableAlphaBlending();
 }
 
@@ -163,18 +129,6 @@ void GuiManager::loadGuiValues(string path)
     //ofDeserialize(xml, m_parameters);
 }
 
-
-void  GuiManager::setMode(int& index)
-{
-    AppManager::getInstance().getAudioManager().changeMode(index);
-}
-
-void  GuiManager::setIndex(int& index)
-{
-    AppManager::getInstance().getAudioManager().changeSample(index);
-}
-
-
 void GuiManager::toggleGui()
 {
     m_showGui = !m_showGui;
@@ -182,22 +136,22 @@ void GuiManager::toggleGui()
 
 void GuiManager::setAudioMode(int value)
 {
-    if(value < 0 || value >= AudioManager::NUM_MODES){
-        return;
-    }
-    
-    string dropBoxName = "MODES";
-    AppManager::getInstance().getAudioManager().changeMode(value);
+	if (value < 0 || value >= AudioManager::NUM_MODES) {
+		return;
+	}
+
+	string dropBoxName = "MODES";
+	AppManager::getInstance().getAudioManager().changeMode(value);
 }
 
 void GuiManager::setAudioIndex(int value)
 {
-    if(value < 0 || value >= AudioManager::NUM_SAMPLES){
-        return;
-    }
-    
-    string dropBoxName = "SAMPLES";
-    AppManager::getInstance().getAudioManager().changeSample(value);
+	if (value < 0 || value >= AudioManager::NUM_SAMPLES) {
+		return;
+	}
+
+	string dropBoxName = "SAMPLES";
+	AppManager::getInstance().getAudioManager().changeSample(value);
 }
 
 void GuiManager::setSerialConnected(bool value)
