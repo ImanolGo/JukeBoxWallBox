@@ -52,6 +52,7 @@ void AudioManager::setup()
 
 void AudioManager::setupPlayer()
 {
+	ofLogNotice() << "AudioManager::setupPlayer";
     m_audioVolume = ofPtr<BasicVisual> (new BasicVisual());
     m_audioVolume->setValue(0.0);
     

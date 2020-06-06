@@ -41,22 +41,24 @@ void LayoutManager::setup()
 	if(m_initialized)
 		return;
 
-    ofLogNotice() <<"LayoutManager::initialized";
 
 	Manager::setup();
 
-  
     this->setupFbos();
     this->setupWindowFrames();
     
     this->createTextVisuals();
     this->createImageVisuals();
+
+	ofLogNotice() << "LayoutManager::initialized";
     
 }
 
 
 void LayoutManager::setupFbos()
 {
+	ofLogNotice() << "LayoutManager::setupFbos";
+
     int margin = MARGIN;
     
     float width = AppManager::getInstance().getSettingsManager().getAppWidth();
@@ -72,6 +74,8 @@ void LayoutManager::setupFbos()
 
 void LayoutManager::setupWindowFrames()
 {
+	ofLogNotice() << "LayoutManager::setupWindowFrames";
+
     ofColor color = AppManager::getInstance().getSettingsManager().getColor("FrameRectangle");
     
     for (auto& fbo : m_fbos)
