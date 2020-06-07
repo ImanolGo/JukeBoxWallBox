@@ -63,6 +63,9 @@ void LayoutManager::setupFbos()
     
     float width = AppManager::getInstance().getSettingsManager().getAppWidth();
     float height  = AppManager::getInstance().getSettingsManager().getAppHeight();
+
+	ofLogNotice() << "LayoutManager::setupFbos -> w = " << width << "h = " << height;
+
     
     ofPtr<ofFbo> fbo = ofPtr<ofFbo>(new ofFbo());
     fbo->allocate(width, height, GL_RGBA);
