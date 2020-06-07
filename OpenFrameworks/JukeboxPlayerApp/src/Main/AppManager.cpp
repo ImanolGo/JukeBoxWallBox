@@ -64,7 +64,7 @@ void AppManager::setupManagers()
     m_resourceManager.setup();
     m_viewManager.setup();
     m_visualEffectsManager.setup();
-    m_layoutManager.setup();
+    //m_layoutManager.setup();
     m_audioManager.setup();
     m_serialManager.setup();
     m_keyboardManager.setup();
@@ -84,7 +84,7 @@ void AppManager::update()
     m_viewManager.update();
     m_audioManager.update();
     m_serialManager.update();
-    m_layoutManager.update();
+   // m_layoutManager.update();
 }
 
 
@@ -96,7 +96,8 @@ void AppManager::draw()
     
     
     ofBackground(17,17,17);
-    m_layoutManager.draw();
+   // m_layoutManager.draw();
+	m_audioManager.draw();
     m_guiManager.draw();
 }
 
