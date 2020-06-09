@@ -230,8 +230,8 @@ bool SerialManager::parseData(const string & message)
     
     int audioMode = ofToInt(input[2]);
     int audioIndex= ofToInt(input[1]);
-   // AppManager::getInstance().getGuiManager().setAudioMode(audioMode);
-    //AppManager::getInstance().getGuiManager().setAudioIndex(audioIndex);
+    AppManager::getInstance().getGuiManager().setAudioMode(audioMode);
+    AppManager::getInstance().getGuiManager().setAudioIndex(audioIndex);
 
     return true;
 }
