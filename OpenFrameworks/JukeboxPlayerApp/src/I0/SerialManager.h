@@ -12,6 +12,7 @@
 
 #include "ofMain.h"
 #include "Manager.h"
+#include "ofxSimpleTimer.h"
 
 #define NUM_BYTES 1
 
@@ -49,7 +50,9 @@ public:
     
     void sendRelayToggle(bool & value);
     
-    bool getConnected() const {return m_connected;}
+    bool getSerialConnected() const {return m_serialConnected;}
+
+	bool getLoraConnected() const { return m_loraConnected; }
     
     void onNewMessage(string & message);
     
@@ -58,6 +61,8 @@ private:
     void readSerialSettings();
     
     void setupSerial();
+
+	void setupTimer();
     
     void autoConnect();
     
@@ -72,18 +77,26 @@ private:
     bool isData(const string & message);
     
     bool isConnected(const string & message);
+
+	bool isLoraConnected(const string & message);
+
+	void setLoraConnected();
     
     bool parseData(const string & message);
 
     void printHex(unsigned char * buffer, int size);
 
     void writeString(string message);
+
+	void timerCompleteHandler(int &args);
     
 private:
     
-    ofSerial	  m_serial;
+    ofSerial			 m_serial;
+	ofxSimpleTimer       m_timerLora;
     //ofxSimpleSerial	  m_serial;
-    bool                m_connected;
+    bool                m_serialConnected;
+	bool                m_loraConnected;
     string			    m_messageBuffer;
 	unsigned char	    m_bytesReturned[NUM_BYTES];
     

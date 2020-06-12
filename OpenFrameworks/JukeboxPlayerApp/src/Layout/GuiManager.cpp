@@ -59,7 +59,9 @@ void GuiManager::setupGuiParameters()
 	m_gui.setup("GUI"); 
     m_gui.add(m_guiFPS.set("FPS", 0, 0, 60));
     
-    m_isSerial.set("Serial", serialManager->getConnected());
+	m_serialConnected.set("Serial", serialManager->getSerialConnected());
+
+	m_loraConnected.set("Connected", serialManager->getLoraConnected());
 
 	m_relay.set("Relay",false);
 	m_relay.addListener(serialManager, &SerialManager::sendRelayToggle);
@@ -67,7 +69,8 @@ void GuiManager::setupGuiParameters()
 	m_light.set("Light", false);
 	m_light.addListener(serialManager, &SerialManager::sendLightToggle);
     
-    m_gui.add(m_isSerial);
+    m_gui.add(m_serialConnected);
+	m_gui.add(m_loraConnected);
 	m_gui.add(m_relay);
 	m_gui.add(m_light);
     
@@ -156,8 +159,14 @@ void GuiManager::setAudioIndex(int value)
 
 void GuiManager::setSerialConnected(bool value)
 {
-    m_isSerial = value;
+    m_serialConnected = value;
 }
+
+void GuiManager::setLoraConnected(bool value)
+{
+	m_loraConnected = value;
+}
+
 
 void GuiManager::setRelayValue(bool value)
 {

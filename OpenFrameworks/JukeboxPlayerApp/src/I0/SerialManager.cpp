@@ -15,7 +15,7 @@
 const int SerialManager::BAUD_RATE = 115200;
 
 
-SerialManager::SerialManager(): Manager(), m_connected(false)
+SerialManager::SerialManager(): Manager(), m_serialConnected(false), m_loraConnected(false)
 {
     //Intentionally left empty
 }
@@ -37,8 +37,10 @@ void SerialManager::setup()
     Manager::setup();
 	bool light = true;
 	bool relay = false;
-
+	
     this->setupSerial();
+	this->setupTimer();
+	
 	AppManager::getInstance().getGuiManager().setLightValue(true);
 	AppManager::getInstance().getGuiManager().setRelayValue(false);
     
@@ -65,18 +67,29 @@ void SerialManager::setupSerial()
     }
 }
 
+void SerialManager::setupTimer()
+{
+	
+	m_timerLora.setup(60*2*1000);
+	m_timerLora.start( false );
+	ofAddListener(m_timerLora.TIMER_COMPLETE, this, &SerialManager::timerCompleteHandler);
+
+	ofLogNotice() << "SerialManager::setupTimer << Time Lora = : " << 60*20 << "s";
+
+}
+
 void SerialManager::connect(int portNum)
 {
     if(m_serial.setup(portNum, BAUD_RATE)) //open a device number
     {
         ofLogNotice() <<"SerialManager::connect << Arduino connected to " << portNum;
-        m_connected = true;
+        m_serialConnected = true;
     }
     else{
-         m_connected = false;
+         m_serialConnected = false;
     }
     
-    AppManager::getInstance().getGuiManager().setSerialConnected(m_connected);
+    AppManager::getInstance().getGuiManager().setSerialConnected(m_serialConnected);
 }
 
 void SerialManager::autoConnect()
@@ -88,19 +101,19 @@ void SerialManager::autoConnect()
     // (ie, COM4 on a pc, /dev/tty.... on linux, /dev/tty... on a mac)
     // arduino users check in arduino app....
     
-    m_connected = false;
+    m_serialConnected = false;
     
     for(auto device: deviceList)
     {
         if(this->checkConnection(device.getDeviceID())) //open a device number
         {
             ofLogNotice() <<"SerialManager::setupSerial << Arduino connected to port " << device.getDeviceName();
-            m_connected = true;
+            m_serialConnected = true;
             return;
         }
     }
     
-    AppManager::getInstance().getGuiManager().setSerialConnected(m_connected);
+    AppManager::getInstance().getGuiManager().setSerialConnected(m_serialConnected);
 }
 
 
@@ -213,14 +226,35 @@ bool SerialManager::isData(const string & message)
     return false;
 }
 
+bool SerialManager::isLoraConnected(const string & message)
+{
+	vector<string> input = ofSplitString(message, ",");
+
+	if (input.size() > 0 && input.front() == "l")
+	{
+		ofLogNotice() << "SerialManager::isLoraConnected -> TRUE ";
+		return true;
+	}
+
+
+	ofLogNotice() << "SerialManager::isLoraConnected -> FALSE ";
+	return false;
+}
+
+
 bool SerialManager::parseData(const string & message)
 {
 
     vector<string> input = ofSplitString(message, ",");
 
-      if(!this->isData(message)){
+    if(!this->isData(message)){
         return false;
     }
+
+	if (this->isLoraConnected(message)) {
+		this->setLoraConnected();
+		return true;
+	}
     
     if(input.size()<3)
     {
@@ -240,7 +274,7 @@ bool SerialManager::parseData(const string & message)
 
 void SerialManager::update()
 {
-    if(!m_connected){
+    if(!m_serialConnected){
         return;
     }
 
@@ -295,7 +329,7 @@ void SerialManager::onNewMessage(string & message)
 void SerialManager::sendLightToggle(bool & value)
 {
 
-    if(!m_connected){
+    if(!m_serialConnected){
         return;
     }
 
@@ -315,7 +349,7 @@ void SerialManager::sendLightToggle(bool & value)
 
 void SerialManager::sendRelayToggle(bool & value)
 {
-    if(!m_connected){
+    if(!m_serialConnected){
         return;
     }
     
@@ -352,4 +386,18 @@ void SerialManager::writeString(string message)
 	unsigned char* chars = (unsigned char*) message.c_str(); // cast from string to unsigned char*
 	int length = message.length();
 	m_serial.writeBytes(chars, length);
+}
+
+void SerialManager::setLoraConnected()
+{
+	m_timerLora.start(false, false);
+	m_loraConnected = true;
+	AppManager::getInstance().getGuiManager().setLoraConnected(m_loraConnected);
+}
+
+void SerialManager::timerCompleteHandler(int &args)
+{
+	ofLogNotice() << "SerialManager::timerCompleteHandler";
+	m_loraConnected = false;
+	AppManager::getInstance().getGuiManager().setLoraConnected(m_loraConnected);
 }

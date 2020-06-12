@@ -196,9 +196,11 @@ void AudioManager::updatePlayer()
     m_soundPlayer.setVolume(m_audioVolume->getValue());
     
     if(m_isPlaying && !m_soundPlayer.isPlaying()){
+
+		ofLogNotice() << "AudioManager::updatePlayer ->  Audio FINISHED!!!";
         m_isPlaying = false;
 		AppManager::getInstance().getGuiManager().setLightValue(true);
-        ofSleepMillis(200);
+        //ofSleepMillis(200);
 		AppManager::getInstance().getGuiManager().setRelayValue(true);
         m_timerRelay.start(false,true);
     }

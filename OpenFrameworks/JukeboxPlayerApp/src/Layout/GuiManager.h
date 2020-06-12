@@ -56,6 +56,8 @@ public:
     
     void setSerialConnected(bool value);
 
+	void setLoraConnected(bool value);
+
 	void setRelayValue(bool value);
 
 	void setLightValue(bool value);
@@ -78,9 +80,10 @@ private:
 	ofxPanel             m_gui;
     
     ofParameter<float>    m_guiFPS;
-    ofParameter<bool>     m_isSerial;
+    ofParameter<bool>     m_serialConnected;
 	ofParameter<bool>     m_relay;
 	ofParameter<bool>     m_light;
+	ofParameter<bool>     m_loraConnected;
     
     
     bool        m_showGui;  //It defines the whether the gui should be shown or not
