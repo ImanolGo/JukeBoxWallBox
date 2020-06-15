@@ -44,6 +44,7 @@ class LoraManager
     void updateLora();
     void copyBuffer(uint8_t* _buffer, uint8_t bufferSize);
     bool isData(uint8_t* _buffer, uint8_t bufferSize);
+    bool isLoraConnected(uint8_t* _buffer, uint8_t bufferSize);
     bool newMessage;
 
     uint8_t received_buffer[RH_RF95_MAX_MESSAGE_LEN];
@@ -140,11 +141,12 @@ void LoraManager::updateLora()
             
    
              //newMessage = true;
-            if(this->isData(buf,len))
+            if(this->isData(buf,len) || this->isLoraConnected(buf,len))
             { 
                 this->copyBuffer(buf, len);
                 newMessage = true;
             }
+           
         }
         else
         {
@@ -172,6 +174,34 @@ void LoraManager::copyBuffer(uint8_t* _buffer, uint8_t bufferSize)
     
 }
 
+bool LoraManager::isLoraConnected(uint8_t* _buffer, uint8_t bufferSize)
+{
+
+//    #ifdef DEBUG
+//          Serial.print("LoraManager::_buffer[0]-> "); Serial.println(_buffer[0]);
+//          Serial.print("LoraManager::_buffer[1]-> "); Serial.println(_buffer[1]);
+//          Serial.print("LoraManager::_buffer[2]-> "); Serial.println(_buffer[2]);
+//     #endif
+
+     ;
+        
+    if ( _buffer[0] == 'l') 
+    { 
+
+       #ifdef DEBUG
+                Serial.println("LoraManager::isLoraConnected -> true");
+        #endif
+            
+                return true; 
+     }
+     
+
+     #ifdef DEBUG
+          Serial.println("LoraManager::isLoraConnected -> false");
+     #endif
+        
+    return false;
+}
 bool LoraManager::isData(uint8_t* _buffer, uint8_t bufferSize)
 {
 
