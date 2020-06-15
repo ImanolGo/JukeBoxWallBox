@@ -44,14 +44,18 @@ class LoraManager
 
     void initializeLora();
     void updateLora();
+    void updateTimer();
     bool parseMessage(uint8_t* _buffer, uint8_t bufferSize);
     bool isData(uint8_t* _buffer, uint8_t bufferSize);
     bool newMessage;
+    bool sendConnected();
 
     String getValue(String data, char separator, int index);
 
     uint8_t output_channel;
     uint8_t output_value;
+
+    unsigned long previousMillis;
 
 };
 
@@ -62,6 +66,7 @@ LoraManager::LoraManager()
     newMessage= false;
     output_channel = 0;
     output_value = 0;
+    previousMillis = 0;
 }
 
 void LoraManager::setup()
@@ -101,14 +106,11 @@ void LoraManager::initializeLora()
 }
 
 
-
-
-
 void LoraManager::update()
 {
   newMessage = false;
   this->updateLora();
-  
+  this->updateTimer();
 }
 
 void LoraManager::updateLora()
@@ -133,6 +135,18 @@ void LoraManager::updateLora()
           Serial.println("LoraManager::Receive failed");
         }
       }
+}
+
+
+void LoraManager::updateTimer()
+{
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= ELLAPSED_TIME_MS) 
+    {
+       previousMillis = currentMillis;
+       this->sendConnected();
+    }
+    
 }
 
 bool LoraManager::parseMessage(uint8_t* _buffer, uint8_t bufferSize)
@@ -170,6 +184,11 @@ bool LoraManager::isData(uint8_t* _buffer, uint8_t bufferSize)
     Serial.print(", mode = "); Serial.println(mode);
     
     return this->sendMessage((uint8_t*)message.c_str(), message.length());
+ }
+
+ bool LoraManager::sendConnected(){
+   String message = "l,0,0";
+   return this->sendMessage((uint8_t*)message.c_str(), message.length());
  }
 
 bool LoraManager::sendMessage(uint8_t* _buffer, uint8_t bufferSize)

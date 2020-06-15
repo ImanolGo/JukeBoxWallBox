@@ -150,7 +150,7 @@ void IOManager::initializeButtons()
       
       buttons1[i] = Bounce();
       buttons1[i].attach(&io1, i, INPUT_PULLUP); 
-      buttons1[i].interval(50);
+      buttons1[i].interval(DEFAULT_DEBOUNCE_MS);
       Serial.print("JukeBoxAllInputs::added button ");  
       Serial.print(i);  
       Serial.println(" to io1");  
@@ -160,7 +160,7 @@ void IOManager::initializeButtons()
       
       buttons2[i] = Bounce();
       buttons2[i].attach(&io2, i, INPUT_PULLUP); 
-      buttons2[i].interval(50);
+      buttons2[i].interval(DEFAULT_DEBOUNCE_MS);
       Serial.print("JukeBoxAllInputs::added button ");  
       Serial.print(i);  
       Serial.println(" to io2");  
@@ -178,7 +178,7 @@ void IOManager::initializeRegisters()
  
       registers[id] = Bounce();
       registers[id].attach(&io2, offset+i, INPUT_PULLUP); 
-      registers[id].interval(50);
+      registers[id].interval(DEFAULT_DEBOUNCE_MS);
       Serial.print("IOManager::added register ");  
       Serial.print(id);  
       Serial.print(", input: ");  
