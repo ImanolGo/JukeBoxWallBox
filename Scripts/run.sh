@@ -6,8 +6,6 @@ echo '-> Jukebox App Script'
 echo '-> Starting Jukebox Application'
 
 
-sleep 20
-
-cd ~/Desktop/Jukebox/OpenFrameworks/JukeboxPlayerApp/bin
+cd /home/pi/Jukebox/OpenFrameworks/JukeboxPlayerApp/bin
 ./JukeboxPlayerApp
 

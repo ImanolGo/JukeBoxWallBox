@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Close
+Comment=Close
+Exec=/home/pi/Jukebox/Scripts/close.sh
+Icon=/home/pi/Jukebox/Scripts/close.png
+Terminal=true
+Type=Application

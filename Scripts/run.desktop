@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Run
+Comment=Run
+Exec=/home/pi/Jukebox/Scripts/run.sh
+Icon=/home/pi/Jukebox/Scripts/run.png
+Terminal=true
+Type=Application
