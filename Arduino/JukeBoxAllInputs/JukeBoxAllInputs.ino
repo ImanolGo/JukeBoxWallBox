@@ -107,8 +107,8 @@ void updatePins()
           Serial.println(i);
         }
         if(buttons1[i].rose()){
-          Serial.print("JukeBoxAllInputs::io1 -> RISING EDGE = ");  
-          Serial.println(i);
+          //Serial.print("JukeBoxAllInputs::io1 -> RISING EDGE = ");  
+          //Serial.println(i);
         }
     }
 
@@ -121,8 +121,8 @@ void updatePins()
           Serial.println(i);
         }
         if(buttons2[i].rose()){
-          Serial.print("JukeBoxAllInputs::io2 -> RISING EDGE = ");  
-          Serial.println(i);
+          //Serial.print("JukeBoxAllInputs::io2 -> RISING EDGE = ");  
+          //Serial.println(i);
         }
     }
 }

@@ -127,14 +127,14 @@ void IOManager::initializeIO()
 {
       Serial.println("IOManager::initializeInputs");  
       
-      if (!io1.begin(0x3E))
+      if (!io2.begin(0x3E))
       {
         while (1) ;
       }
 
       Serial.println("IOManager::initializeInputs -> connected to io1");
       
-       if (!io2.begin(0x3F))
+       if (!io1.begin(0x3F))
       {
         while (1) ;
       }

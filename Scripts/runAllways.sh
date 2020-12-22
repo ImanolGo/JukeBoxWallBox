@@ -14,8 +14,8 @@ cd $dir
 echo '-> Starting Jukebox Application'
 
 PROCESS=JukeboxPlayerAp
-
-cd ~/Desktop/Jukebox/OpenFrameworks/JukeboxPlayerApp/bin
+export DISPLAY=:0.0
+cd ~/Jukebox/OpenFrameworks/JukeboxPlayerApp/bin
 
 while true; do
 	if pgrep $PROCESS
