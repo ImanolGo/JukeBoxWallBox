@@ -247,21 +247,22 @@ bool SerialManager::parseData(const string & message)
 
     vector<string> input = ofSplitString(message, ",");
 
-    if(!this->isData(message)){
-        return false;
-    }
-
-	if (this->isLoraConnected(message)) {
+    if (this->isLoraConnected(message)) {
 		this->setLoraConnected();
 		return true;
 	}
-    
+
+ 
     if(input.size()<3)
     {
         ofLogNotice() <<"SerialManager::parseData -> data size too small -> " << input.size() ;
         return false;
     }
     
+    if(!this->isData(message)){
+        return false;
+    }
+
     int audioMode = ofToInt(input[2]);
     int audioIndex= ofToInt(input[1]);
     AppManager::getInstance().getGuiManager().setAudioMode(audioMode);

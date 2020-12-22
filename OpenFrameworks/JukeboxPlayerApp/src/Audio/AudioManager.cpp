@@ -201,8 +201,16 @@ void AudioManager::updatePlayer()
         m_isPlaying = false;
 		AppManager::getInstance().getGuiManager().setLightValue(true);
         //ofSleepMillis(200);
-		AppManager::getInstance().getGuiManager().setRelayValue(true);
-        m_timerRelay.start(false,true);
+
+        bool toggle = true;
+        AppManager::getInstance().getSerialManager().sendRelayToggle(toggle);
+        ofSleepMillis(200);
+        toggle = false;
+        AppManager::getInstance().getSerialManager().sendRelayToggle(toggle);
+
+		//AppManager::getInstance().getGuiManager().setRelayValue(true);
+        //ofSleepMillis(200);
+        //m_timerRelay.start(false,true);
     }
 }
 
