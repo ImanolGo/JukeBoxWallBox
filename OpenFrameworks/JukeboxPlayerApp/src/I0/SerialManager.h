@@ -47,6 +47,8 @@ public:
     //void onSetColor(const ofColor& color);
     
     void sendLightToggle(bool & value);
+
+    void sendLightToggle2(bool & value);
     
     void sendRelayToggle(bool & value);
     

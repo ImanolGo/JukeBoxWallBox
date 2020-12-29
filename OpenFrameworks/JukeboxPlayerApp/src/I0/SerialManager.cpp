@@ -346,6 +346,29 @@ void SerialManager::sendLightToggle(bool & value)
     ofLogNotice() <<"SerialManager::sendLightToggle ->  message: " << message;
 
     this->writeString(message);
+
+    this->sendLightToggle2(!value);
+}
+
+void SerialManager::sendLightToggle2(bool & value)
+{
+
+    if(!m_serialConnected){
+        return;
+    }
+
+    ofLogNotice() <<"SerialManager::sendLightToggle2 ->  " << value;
+    
+    int channel = 1;
+
+    string message = "";
+    message+= "d,";
+    message+= ofToString(channel); message+= ",";
+    message+= ofToString(value); message+= '|';
+
+    ofLogNotice() <<"SerialManager::sendLightToggle2 ->  message: " << message;
+
+    this->writeString(message);
 }
 
 void SerialManager::sendRelayToggle(bool & value)
@@ -356,7 +379,7 @@ void SerialManager::sendRelayToggle(bool & value)
     
     ofLogNotice() <<"SerialManager::sendRelayToggle ->  " << value;
 
-    int channel = 1;
+    int channel = 2;
 
     string message = "";
     message+= "d,";
