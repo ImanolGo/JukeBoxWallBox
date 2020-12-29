@@ -347,7 +347,8 @@ void SerialManager::sendLightToggle(bool & value)
 
     this->writeString(message);
 
-    this->sendLightToggle2(!value);
+    bool newValue = !value;
+    this->sendLightToggle2(!newValue);
 }
 
 void SerialManager::sendLightToggle2(bool & value)
