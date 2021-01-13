@@ -1,4 +1,4 @@
 # JukeboxPlayerApp
 
-Developed under OpenFrameworks v0.10.0
+Developed under OpenFrameworks v0.11.0
 
