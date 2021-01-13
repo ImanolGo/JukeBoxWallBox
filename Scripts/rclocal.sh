@@ -11,10 +11,8 @@
 #
 # By default this script does nothing.
 
-echo "runninng Jimmy Choo" > /tmp/rc_test.txt
+echo "runninng JukeBox" > /tmp/rc_test.txt
 
-
-/home/pi/Jimmy-Choo-Shop-Window/Scripts/network-monitor.sh &
 
 (sleep 15 && /home/pi/Desktop/Jukebox/Scripts/autostart.sh) &
 
