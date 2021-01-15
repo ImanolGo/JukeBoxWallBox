@@ -121,7 +121,7 @@ bool SerialManager::checkConnection(int portNum)
 {
     if(m_serial.setup(portNum, BAUD_RATE)) //open a device number
     {
-        //m_serial.flush();
+        m_serial.flush();
         this->sendConnection();
         ofSleepMillis(500);
         if(this->receivedConnected()){
