@@ -109,6 +109,7 @@ void SerialManager::parseMessage(String& message)
       #endif
         
      if(this->isConnection(message)){
+        Serial.flush();
         this->sendConnected();
         
       }
