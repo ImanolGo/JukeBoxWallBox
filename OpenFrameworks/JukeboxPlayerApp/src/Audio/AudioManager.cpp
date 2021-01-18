@@ -204,8 +204,12 @@ void AudioManager::updatePlayer()
 
         bool toggle = true;
         AppManager::getInstance().getSerialManager().sendRelayToggle(toggle);
+        ofSleepMillis(100);
+	AppManager::getInstance().getSerialManager().sendRelayToggle(toggle);
         ofSleepMillis(200);
         toggle = false;
+        AppManager::getInstance().getSerialManager().sendRelayToggle(toggle);
+	ofSleepMillis(200);
         AppManager::getInstance().getSerialManager().sendRelayToggle(toggle);
 
 		//AppManager::getInstance().getGuiManager().setRelayValue(true);
