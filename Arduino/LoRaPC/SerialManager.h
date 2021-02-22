@@ -41,6 +41,8 @@ class SerialManager
     String getValue(String data, char separator, int index);
   
     bool m_connected;
+    byte m_index = 0;
+    char m_buffer [20];
   
 };
 
@@ -78,12 +80,22 @@ void SerialManager::update()
 
 void SerialManager::updateSerial()
 {     
-      if(Serial.available())
-      {
-        String message = Serial.readStringUntil('|');
-        this->parseMessage(message);
+    if (Serial.available()) 
+    {  
+         c = Serial.read();
+         if (c != '|')
+         {
+           m_buffer[m_index] = c;
+           m_index = m_index + 1;
+         }
+         else
+         {
+           m_buffer[m_index] = '\0';
+           m_index = 0;
+           this->parseMessage(String(m_buffer));
+         }
+    }
 
-      }
 }
 
 
